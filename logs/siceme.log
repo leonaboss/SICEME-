@@ -7221,3 +7221,35 @@ ModuleNotFoundError: No module named 'pandas'
 [2026-04-26 18:32:37,748] INFO django.server basehttp "GET /static/js/main.js?v=1.5 HTTP/1.1" 304 0
 [2026-04-26 18:32:40,141] INFO django.server basehttp "GET /api/dashboard-data/?anio=2026&_=1777242759026 HTTP/1.1" 200 960
 [2026-04-26 18:32:40,611] INFO django.utils.autoreload autoreload Watching for file changes with StatReloader
+[2026-04-26 18:32:45,827] INFO django.server basehttp "GET /usuarios/logout/ HTTP/1.1" 302 0
+[2026-04-26 18:32:46,057] INFO django.server basehttp "GET /usuarios/login/ HTTP/1.1" 200 4531
+[2026-04-26 18:32:55,561] INFO django.server basehttp "GET /emergencias/ HTTP/1.1" 302 0
+[2026-04-26 18:32:55,635] INFO django.server basehttp "GET /usuarios/login/?next=/emergencias/ HTTP/1.1" 200 4275
+[2026-04-26 18:33:38,200] INFO django.server basehttp "GET / HTTP/1.1" 302 0
+[2026-04-26 18:33:38,319] INFO django.server basehttp "GET /usuarios/login/?next=/ HTTP/1.1" 200 4275
+[2026-04-26 18:33:38,838] INFO django.server basehttp "GET /static/img/logo_unefm.png HTTP/1.1" 200 70501
+[2026-04-26 18:33:38,887] INFO django.server basehttp "GET /static/css/style.css HTTP/1.1" 200 26777
+[2026-04-26 18:33:42,361] INFO django.server basehttp "GET /static/img/favicon.png?v=2 HTTP/1.1" 200 445410
+[2026-04-26 18:34:57,648] INFO django.server basehttp "GET / HTTP/1.1" 302 0
+[2026-04-26 18:34:57,708] INFO django.server basehttp "GET /usuarios/login/?next=/ HTTP/1.1" 200 4275
+[2026-04-26 18:34:57,850] INFO django.server basehttp "GET /static/css/style.css HTTP/1.1" 200 26777
+[2026-04-26 18:34:59,805] INFO django.server basehttp "GET /static/img/logo_unefm.png HTTP/1.1" 200 70501
+[2026-04-26 18:35:22,152] INFO django.server basehttp "GET /usuarios/crear-cuenta/ HTTP/1.1" 200 7024
+[2026-04-26 18:35:30,946] INFO django.server basehttp "GET /usuarios/login/ HTTP/1.1" 200 4275
+[2026-04-26 18:35:33,830] INFO django.server basehttp "GET /static/img/favicon.png?v=2 HTTP/1.1" 200 445410
+[2026-04-26 18:37:12,270] INFO django.server basehttp "GET /usuarios/login/ HTTP/1.1" 200 4275
+[2026-04-26 18:37:17,582] INFO django.server basehttp "POST /usuarios/login/ HTTP/1.1" 200 4557
+[2026-04-26 18:38:12,649] INFO django.server basehttp "POST /usuarios/login/ HTTP/1.1" 200 4574
+[2026-04-26 18:38:24,333] INFO django.server basehttp "POST /usuarios/login/?next=/emergencias/ HTTP/1.1" 302 0
+[2026-04-26 18:38:24,515] INFO django.server basehttp "GET /menu/ HTTP/1.1" 200 23075
+[2026-04-26 18:38:26,515] INFO django.server basehttp "GET /api/dashboard-data/?anio=2026&_=1777243105812 HTTP/1.1" 200 960
+[2026-04-26 18:39:46,904] INFO django.server basehttp - Broken pipe from ('192.168.1.118', 51012)
+[2026-04-26 18:48:48,212] INFO django.server basehttp "GET / HTTP/1.1" 302 0
+[2026-04-26 18:48:48,479] INFO django.server basehttp "GET /usuarios/login/?next=/ HTTP/1.1" 200 4275
+[2026-04-26 18:49:08,671] INFO django.server basehttp - Broken pipe from ('192.168.1.118', 57656)
+[2026-04-26 18:49:08,673] INFO django.server basehttp - Broken pipe from ('192.168.1.118', 57644)
+[2026-04-26 18:49:08,673] INFO django.server basehttp - Broken pipe from ('192.168.1.118', 57642)
+[2026-04-26 19:03:42,465] INFO django.server basehttp - Broken pipe from ('127.0.0.1', 49955)
+[2026-04-26 19:03:42,828] INFO django.server basehttp "GET /usuarios/login/?next=/ HTTP/1.1" 302 0
+[2026-04-26 19:03:43,536] INFO django.server basehttp "GET /menu/ HTTP/1.1" 200 22854
+[2026-04-26 19:03:50,716] INFO django.server basehttp "GET /api/dashboard-data/?anio=2026&_=1777244630053 HTTP/1.1" 200 960
