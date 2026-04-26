@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% block title %}SICEME - Usuarios{% endblock %}
+{% block page_title %}Gestión de Usuarios{% endblock %}
+{% block page_subtitle %}Administración de cuentas del sistema{% endblock %}
+
+{% block content %}
+<div class="table-card">
+    <div class="table-card-header">
+        <h3><i class="bi bi-people-fill" style="color:var(--primary)"></i> Usuarios del Sistema</h3>
+        <div class="d-flex gap-2 flex-wrap">
+            <form method="get" class="search-box">
+                <i class="bi bi-search"></i>
+                <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="Buscar usuario..."
+                    style="width:220px;">
+            </form>
+            <a href="{% url 'registro' %}" class="btn-siceme"><i class="bi bi-person-plus-fill"></i> Nuevo Usuario</a>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Usuario</th>
+                    <th>Email</th>
+                    <th>Nombre</th>
+                    <th>Rol</th>
+                    <th>Estado</th>
+                    <th>Intentos</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in usuarios %}
+                <tr>
+                    <td><strong>{{ u.username }}</strong></td>
+                    <td>{{ u.email }}</td>
+                    <td>{{ u.get_full_name|default:"-" }}</td>
+                    <td><span class="badge-role {{ u.rol|lower }}">{{ u.get_rol_display }}</span></td>
+                    <td>
+                        {% if u.is_locked %}
+                        <span class="badge-status locked"><i class="bi bi-lock-fill"></i> Bloqueado</span>
+                        {% elif u.is_active %}
+                        <span class="badge-status active"><i class="bi bi-check-circle"></i> Activo</span>
+                        {% else %}
+                        <span class="badge-status inactive">Inactivo</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ u.failed_attempts }}/3</td>
+                    <td>
+                        <div class="d-flex gap-1">
+                            <a href="{% url 'editar_usuario' u.pk %}" class="btn-info-sm" data-bs-toggle="tooltip"
+                                title="Editar"><i class="bi bi-pencil"></i></a>
+
+                            <form method="post" action="{% url 'toggle_estado_usuario' u.pk %}" style="display:inline;">
+                                {% csrf_token %}
+                                {% if u.is_active %}
+                                <button type="submit"
+                                    style="background-color:#f5a623; color:white; padding:4px 8px; font-size:0.8rem; border:none; border-radius:4px;"
+                                    data-bs-toggle="tooltip" title="Desactivar cuenta"><i
+                                        class="bi bi-person-x"></i></button>
+                                {% else %}
+                                <button type="submit" class="btn-success-sm" data-bs-toggle="tooltip"
+                                    title="Activar cuenta"><i class="bi bi-person-check"></i></button>
+                                {% endif %}
+                            </form>
+
+                            {% if u.rol != 'ADMIN' %}
+                            <form method="post" action="{% url 'promover_admin_usuario' u.pk %}" style="display:inline;"
+                                onsubmit="return confirm('¿Estás seguro de que deseas hacer Administrador a este usuario? Tendrá los mismos permisos y controles que tú sobre el sistema.');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-siceme"
+                                    style="padding:4px 8px;font-size:0.8rem;border:none;border-radius:4px;"
+                                    data-bs-toggle="tooltip" title="Hacer Administrador"><i
+                                        class="bi bi-shield-lock-fill"></i></button>
+                            </form>
+                            {% endif %}
+
+                            {% if u.is_locked %}
+                            <form method="post" action="{% url 'desbloquear_usuario' u.pk %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-success-sm" data-bs-toggle="tooltip"
+                                    title="Desbloquear"><i class="bi bi-unlock"></i></button>
+                            </form>
+                            {% endif %}
+                            <a href="{% url 'eliminar_usuario' u.pk %}" class="btn-danger-sm" data-bs-toggle="tooltip"
+                                title="Eliminar"><i class="bi bi-trash"></i></a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center text-muted py-4">No hay usuarios registrados</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% if usuarios.has_other_pages %}
+    <nav class="pagination-container">
+        <ul class="pagination">
+            {% if usuarios.has_previous %}
+            <li class="page-item"><a class="page-link"
+                    href="?page={{ usuarios.previous_page_number }}&q={{ query }}">&laquo;</a></li>
+            {% endif %}
+            {% for num in usuarios.paginator.page_range %}
+            <li class="page-item {% if usuarios.number == num %}active{% endif %}">
+                <a class="page-link" href="?page={{ num }}&q={{ query }}">{{ num }}</a>
+            </li>
+            {% endfor %}
+            {% if usuarios.has_next %}
+            <li class="page-item"><a class="page-link"
+                    href="?page={{ usuarios.next_page_number }}&q={{ query }}">&raquo;</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}

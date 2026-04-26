@@ -1,0 +1,539 @@
+{% extends 'base.html' %}
+{% block title %}SICEME - Reporte Estadístico por Periodo{% endblock %}
+{% block page_title %}Reporte Estadístico por Periodo{% endblock %}
+{% block page_subtitle %}Análisis comparativo mensual &bull; Año {{ anio }}{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="table-card p-4">
+            <form method="get" class="row align-items-end g-3">
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">Desde (Mes)</label>
+                    <select name="mes_inicio" class="form-select border-primary">
+                        <option value="1" {% if mes_inicio == 1 %}selected{% endif %}>Enero</option>
+                        <option value="2" {% if mes_inicio == 2 %}selected{% endif %}>Febrero</option>
+                        <option value="3" {% if mes_inicio == 3 %}selected{% endif %}>Marzo</option>
+                        <option value="4" {% if mes_inicio == 4 %}selected{% endif %}>Abril</option>
+                        <option value="5" {% if mes_inicio == 5 %}selected{% endif %}>Mayo</option>
+                        <option value="6" {% if mes_inicio == 6 %}selected{% endif %}>Junio</option>
+                        <option value="7" {% if mes_inicio == 7 %}selected{% endif %}>Julio</option>
+                        <option value="8" {% if mes_inicio == 8 %}selected{% endif %}>Agosto</option>
+                        <option value="9" {% if mes_inicio == 9 %}selected{% endif %}>Septiembre</option>
+                        <option value="10" {% if mes_inicio == 10 %}selected{% endif %}>Octubre</option>
+                        <option value="11" {% if mes_inicio == 11 %}selected{% endif %}>Noviembre</option>
+                        <option value="12" {% if mes_inicio == 12 %}selected{% endif %}>Diciembre</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">Hasta (Mes)</label>
+                    <select name="mes_fin" class="form-select border-primary">
+                        <option value="1" {% if mes_fin == 1 %}selected{% endif %}>Enero</option>
+                        <option value="2" {% if mes_fin == 2 %}selected{% endif %}>Febrero</option>
+                        <option value="3" {% if mes_fin == 3 %}selected{% endif %}>Marzo</option>
+                        <option value="4" {% if mes_fin == 4 %}selected{% endif %}>Abril</option>
+                        <option value="5" {% if mes_fin == 5 %}selected{% endif %}>Mayo</option>
+                        <option value="6" {% if mes_fin == 6 %}selected{% endif %}>Junio</option>
+                        <option value="7" {% if mes_fin == 7 %}selected{% endif %}>Julio</option>
+                        <option value="8" {% if mes_fin == 8 %}selected{% endif %}>Agosto</option>
+                        <option value="9" {% if mes_fin == 9 %}selected{% endif %}>Septiembre</option>
+                        <option value="10" {% if mes_fin == 10 %}selected{% endif %}>Octubre</option>
+                        <option value="11" {% if mes_fin == 11 %}selected{% endif %}>Noviembre</option>
+                        <option value="12" {% if mes_fin == 12 %}selected{% endif %}>Diciembre</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-bold">Año</label>
+                    <input type="number" name="anio" class="form-control" value="{{ anio }}">
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn-siceme w-100">
+                        <i class="bi bi-graph-up-arrow me-2"></i> Actualizar Estadísticas
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="area-reporte" class="p-2">
+    <!-- Título para la Imagen -->
+    <div class="d-none d-print-block mb-4 text-center">
+        <h2 class="fw-bold">REPORTE ESTADÍSTICO CONSOLIDADO</h2>
+        <p class="text-muted">Periodo: {{ mes_inicio }} al {{ mes_fin }} - Año {{ anio }}</p>
+    </div>
+
+    <!-- Panel de Insights Inteligentes -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm p-3 mb-3" style="border-left: 5px solid #3b82f6 !important; background: linear-gradient(to right, #ffffff, #f0f7ff);">
+                <div class="d-flex align-items-center">
+                    <div class="rounded-circle bg-primary-subtle p-3 me-3">
+                        <i class="bi bi-trophy-fill text-primary fs-4"></i>
+                    </div>
+                    <div>
+                        <small class="text-muted d-block fw-bold text-uppercase" style="font-size: 0.7rem;">Mes con Mayor Carga</small>
+                        <h4 class="mb-0 fw-bold text-dark">{{ insight_mes_max }}</h4>
+                        <small class="text-primary fw-bold">{{ insight_max_valor }} pacientes totales</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm p-3 mb-3" style="border-left: 5px solid #8b5cf6 !important; background: linear-gradient(to right, #ffffff, #f5f3ff);">
+                <div class="d-flex align-items-center">
+                    <div class="rounded-circle bg-purple-subtle p-3 me-3">
+                        <i class="bi bi-star-fill text-purple fs-4"></i>
+                    </div>
+                    <div>
+                        <small class="text-muted d-block fw-bold text-uppercase" style="font-size: 0.7rem;">Servicio Predominante</small>
+                        <h4 class="mb-0 fw-bold text-dark">{{ insight_servicio_top }}</h4>
+                        <small class="text-purple fw-bold">Mayor demanda en el periodo</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm p-3 mb-3" style="border-left: 5px solid #10b981 !important; background: linear-gradient(to right, #ffffff, #f0fdf4);">
+                <div class="d-flex align-items-center">
+                    <div class="rounded-circle bg-emerald-subtle p-3 me-3">
+                        <i class="bi bi-graph-up text-success fs-4"></i>
+                    </div>
+                    <div>
+                        <small class="text-muted d-block fw-bold text-uppercase" style="font-size: 0.7rem;">Promedio Mensual</small>
+                        <h4 class="mb-0 fw-bold text-dark">{{ promedio_mensual }}</h4>
+                        <small class="text-success fw-bold">Pacientes por mes</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráfico Comparativo Mensual -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="chart-card p-4 shadow-sm border-0">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="mb-0"><i class="bi bi-bar-chart-fill text-primary me-2"></i>Comparativa de Volumen Total Mensual</h3>
+                    <div class="d-flex gap-2">
+                        <button onclick="exportarGrafico('chart-periodo', 'comparativa_mensual.png')" class="btn btn-sm btn-outline-primary border-0" title="Descargar Imagen">
+                            <i class="bi bi-download"></i>
+                        </button>
+                        <span class="badge bg-primary text-white">Gráfico Apilado</span>
+                        <span class="badge bg-light text-muted border">Análisis de Carga</span>
+                    </div>
+                </div>
+                <div style="height: 350px;">
+                    <canvas id="chart-periodo"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de Desglose Mensual -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="table-card shadow-sm border-0">
+                <div class="table-card-header bg-white">
+                    <h3 class="mb-0"><i class="bi bi-table text-secondary me-2"></i>Detalle de Registros por Mes</h3>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-bordered align-middle mb-0 text-center">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="text-start ps-4">Mes</th>
+                                <th>Emergencias</th>
+                                <th>Especialistas</th>
+                                <th>Ecosonogramas</th>
+                                <th>No Asistidos</th>
+                                <th class="bg-primary-subtle fw-bold">Total Mes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for d in datos_mensuales %}
+                            <tr>
+                                <td class="text-start ps-4 fw-bold text-primary">{{ d.nombre }}</td>
+                                <td>{{ d.emergencias }}</td>
+                                <td>{{ d.especialistas }}</td>
+                                <td>{{ d.ecos }}</td>
+                                <td>{{ d.no_asistidos }}</td>
+                                <td class="bg-primary-subtle fw-bold text-primary">
+                                    {{ d.total }}
+                                    {% if d.variacion != 0 %}
+                                        <span class="ms-1" style="font-size: 0.75rem;">
+                                            {% if d.variacion > 0 %}
+                                                <i class="bi bi-caret-up-fill text-danger" title="Incremento del {{ d.variacion }}%"></i>
+                                            {% else %}
+                                                <i class="bi bi-caret-down-fill text-success" title="Descenso del {{ d.variacion }}%"></i>
+                                            {% endif %}
+                                        </span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot class="bg-dark text-white fw-bold">
+                            <tr>
+                                <td class="text-start ps-4">TOTAL PERIODO</td>
+                                <td>{{ totales.emergencias }}</td>
+                                <td>{{ totales.especialistas }}</td>
+                                <td>{{ totales.ecosonogramas }}</td>
+                                <td>{{ totales.no_asistidos }}</td>
+                                <td class="bg-primary text-white" style="font-size: 1.2rem;">{{ total_periodo }}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="table-card h-100 shadow-sm border-0 overflow-hidden">
+                <div class="table-card-header bg-white py-3">
+                    <h3 class="mb-0"><i class="bi bi-trophy-fill text-warning me-2"></i>Ranking de Especialidades</h3>
+                </div>
+                <div class="p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="bg-light-subtle">
+                                <tr>
+                                    <th class="ps-4" style="font-size: 0.7rem;"># POS</th>
+                                    <th style="font-size: 0.7rem;">ESPECIALIDAD</th>
+                                    <th class="text-end pe-4" style="font-size: 0.7rem;">TOTAL PACIENTES</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in desglose_esp %}
+                                <tr class="align-middle">
+                                    <td class="ps-4">
+                                        {% if forloop.counter == 1 %}
+                                            <span class="badge rounded-circle p-2" style="background: linear-gradient(135deg, #FFD700, #FFA500); color: #fff; width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center;">1</span>
+                                        {% elif forloop.counter == 2 %}
+                                            <span class="badge rounded-circle p-2" style="background: linear-gradient(135deg, #C0C0C0, #808080); color: #fff; width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center;">2</span>
+                                        {% elif forloop.counter == 3 %}
+                                            <span class="badge rounded-circle p-2" style="background: linear-gradient(135deg, #CD7F32, #8B4513); color: #fff; width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center;">3</span>
+                                        {% else %}
+                                            <span class="text-muted ps-2">{{ forloop.counter }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="fw-bold text-dark">{{ item.especialidad }}</div>
+                                        <div class="progress mt-1" style="height: 4px; width: 100px;">
+                                            <div class="progress-bar bg-primary" role="progressbar" style="width: {% widthratio item.total insight_max_valor 100 %}%"></div>
+                                        </div>
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <span class="badge bg-primary-subtle text-primary fw-bold" style="font-size: 0.9rem;">
+                                            {{ item.total }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr><td colspan="3" class="text-center py-4 text-muted">Sin datos registrados</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="table-card h-100 shadow-sm border-0 overflow-hidden">
+                <div class="table-card-header bg-white py-3">
+                    <h3 class="mb-0"><i class="bi bi-activity text-success me-2"></i>Distribución de Ecosonogramas</h3>
+                </div>
+                <div class="p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="bg-light-subtle">
+                                <tr>
+                                    <th class="ps-4" style="font-size: 0.7rem;">TIPO DE ECO</th>
+                                    <th class="text-end pe-4" style="font-size: 0.7rem;">CANTIDAD</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in desglose_eco %}
+                                <tr class="align-middle">
+                                    <td class="ps-4">
+                                        <div class="fw-bold text-dark text-capitalize">{{ item.tipo_eco }}</div>
+                                        <div class="progress mt-1" style="height: 4px; width: 100px;">
+                                            <div class="progress-bar bg-success" role="progressbar" style="width: {% widthratio item.total insight_max_valor 100 %}%"></div>
+                                        </div>
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <span class="badge bg-success-subtle text-success fw-bold" style="font-size: 0.9rem;">
+                                            {{ item.total }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr><td colspan="2" class="text-center py-4 text-muted">Sin datos de ecosonogramas</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex justify-content-center gap-4 mb-5 flex-wrap">
+    <!-- Botón Carga Masiva (Style: Glass Blue) -->
+    <button type="button" class="btn-premium btn-import" data-bs-toggle="modal" data-bs-target="#modalImportMasivo">
+        <div class="btn-content">
+            <i class="bi bi-cloud-arrow-up-fill"></i>
+            <div class="btn-text">
+                <span class="main-text">Carga Masiva</span>
+                <span class="sub-text">Excel Multihonja</span>
+            </div>
+        </div>
+    </button>
+
+    <!-- Botón Descargar Excel (Style: Emerald Green) -->
+    <a href="{% url 'exportar_reporte_periodo' %}?mes_inicio={{ mes_inicio }}&mes_fin={{ mes_fin }}&anio={{ anio }}" class="btn-premium btn-excel">
+        <div class="btn-content">
+            <i class="bi bi-file-earmark-excel-fill"></i>
+            <div class="btn-text">
+                <span class="main-text">Descargar Reporte</span>
+                <span class="sub-text">Formato Excel (.xlsx)</span>
+            </div>
+        </div>
+    </a>
+
+    <!-- Botón Descargar Imagen (Style: Royal Blue) -->
+    <button onclick="descargarReporteImagen()" class="btn-premium btn-image">
+        <div class="btn-content">
+            <i class="bi bi-image-fill"></i>
+            <div class="btn-text">
+                <span class="main-text">Reporte Estadístico</span>
+                <span class="sub-text">Descargar Imagen (PNG)</span>
+            </div>
+        </div>
+    </button>
+</div>
+
+<style>
+    /* Estilos Premium para Botones */
+    .btn-premium {
+        position: relative;
+        border: none;
+        border-radius: 16px;
+        padding: 12px 28px;
+        color: white;
+        text-decoration: none;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 260px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .btn-premium:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        color: white;
+    }
+
+    .btn-premium:active {
+        transform: translateY(-2px);
+    }
+
+    .btn-content {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        z-index: 2;
+    }
+
+    .btn-content i {
+        font-size: 1.8rem;
+    }
+
+    .btn-text {
+        display: flex;
+        flex-direction: column;
+        text-align: left;
+    }
+
+    .main-text {
+        font-weight: 700;
+        font-size: 1rem;
+        line-height: 1.2;
+    }
+
+    .sub-text {
+        font-size: 0.75rem;
+        opacity: 0.85;
+        font-weight: 400;
+    }
+
+    /* Colores y Degradados */
+    .btn-import {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    }
+    .btn-import::after {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: linear-gradient(rgba(255,255,255,0.1), transparent);
+    }
+
+    .btn-excel {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+
+    .btn-image {
+        background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .btn-premium { width: 100%; }
+    }
+</style>
+
+<!-- Modal Importación Masiva -->
+<div class="modal fade" id="modalImportMasivo" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title"><i class="bi bi-file-earmark-arrow-up me-2"></i>Importación Consolidada</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{% url 'importar_excel' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="tipo" value="consolidado">
+                <div class="modal-body p-4">
+                    <p class="text-muted">Seleccione un archivo Excel (.xlsx) que contenga pestañas con los nombres: <strong>Emergencias, Especialistas, Ecos o No Asistidos</strong>.</p>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Archivo Excel Maestro</label>
+                        <input type="file" name="archivo_excel" class="form-control" accept=".xlsx" required>
+                    </div>
+                    <div class="alert alert-warning py-2" style="font-size: 0.85rem;">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        El sistema detectará automáticamente el destino de cada registro basándose en el nombre de la pestaña.
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Iniciar Carga Masiva</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts para el Gráfico -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+<script>
+    function exportarGrafico(canvasId, filename) {
+        const canvas = document.getElementById(canvasId);
+        const link = document.createElement('a');
+        link.download = filename;
+        link.href = canvas.toDataURL('image/png', 1.0);
+        link.click();
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('chart-periodo').getContext('2d');
+        
+        const labels = [{% for d in datos_mensuales %}"{{ d.nombre }}",{% endfor %}];
+        
+        new Chart(ctx, {
+            type: 'bar',
+            plugins: [ChartDataLabels],
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Emergencias',
+                        data: [{% for d in datos_mensuales %}{{ d.emergencias }},{% endfor %}],
+                        backgroundColor: '#3b82f6',
+                        borderRadius: 5
+                    },
+                    {
+                        label: 'Especialistas',
+                        data: [{% for d in datos_mensuales %}{{ d.especialistas }},{% endfor %}],
+                        backgroundColor: '#8b5cf6',
+                        borderRadius: 5
+                    },
+                    {
+                        label: 'Ecosonogramas',
+                        data: [{% for d in datos_mensuales %}{{ d.ecos }},{% endfor %}],
+                        backgroundColor: '#10b981',
+                        borderRadius: 5
+                    },
+                    {
+                        label: 'No Asistidos',
+                        data: [{% for d in datos_mensuales %}{{ d.no_asistidos }},{% endfor %}],
+                        backgroundColor: '#ef4444',
+                        borderRadius: 5
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'top' },
+                    title: { display: false },
+                    datalabels: {
+                        color: '#ffffff',
+                        font: {
+                            weight: 'bold',
+                            size: 11
+                        },
+                        formatter: function(value, context) {
+                            if (value > 0) {
+                                const label = context.dataset.label;
+                                return label + ": " + value;
+                            }
+                            return '';
+                        },
+                        anchor: 'center',
+                        align: 'center'
+                    }
+                },
+                scales: {
+                    x: {
+                        stacked: true,
+                        grid: { display: false }
+                    },
+                    y: {
+                        stacked: true,
+                        beginAtZero: true,
+                        ticks: { stepSize: 1 },
+                        grid: { color: '#f1f5f9' }
+                    }
+                }
+            }
+        });
+    });
+
+    function descargarReporteImagen() {
+        const area = document.getElementById('area-reporte');
+        html2canvas(area, {
+            scale: 2,
+            useCORS: true,
+            backgroundColor: '#ffffff'
+        }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = `Estadistica_SICEME_${new Date().getTime()}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+        });
+    }
+</script>
+
+<style>
+    .bg-primary-subtle { background-color: #eef2ff !important; }
+    .table-bordered th, .table-bordered td { border: 1px solid #e2e8f0; }
+    #area-reporte { background-color: white; border-radius: 12px; }
+</style>
+{% endblock %}

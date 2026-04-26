@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}SICEME - No Asistidos{% endblock %}
+{% block page_title %}Pacientes No Asistidos por Especialidad{% endblock %}
+{% block page_subtitle %}Año {{ anio }}{% endblock %}
+{% block content %}
+<div class="filters-bar">
+    <form method="get" class="d-flex gap-2 align-items-end">
+        <div>
+            <label class="form-label small fw-semibold">Año</label>
+            <input type="number" name="anio" value="{{ anio }}" class="form-control" style="width:120px;">
+        </div>
+        <button type="submit" class="btn-siceme btn-sm"><i class="bi bi-funnel"></i> Filtrar</button>
+        <a href="{% url 'exportar_excel' %}?tipo=no_asistidos&anio={{ anio }}" class="btn-siceme-outline btn-sm"><i
+                class="bi bi-file-earmark-excel"></i> Excel</a>
+    </form>
+</div>
+<div class="table-card">
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Especialidad</th>
+                    <th>Total No Asistidos</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for na in no_asistidos %}
+                <tr>
+                    <td><strong>{{ na.especialidad__nombre }}</strong></td>
+                    <td><span class="badge-status locked">{{ na.total }}</span></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="2" class="text-center text-muted py-4">Sin datos</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

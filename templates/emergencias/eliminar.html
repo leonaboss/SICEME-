@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}SICEME - Archivar Registro{% endblock %}
+{% block page_title %}Archivar Registro{% endblock %}
+{% block content %}
+<div class="delete-confirm mx-auto mt-4">
+    <div class="icon-danger" style="background:var(--warning-light);color:var(--warning);"><i
+            class="bi bi-archive-fill"></i></div>
+    <h3 class="text-center mb-3">¿Archivar este registro?</h3>
+    <p class="text-center text-muted mb-4"><strong>{{ registro.nombre_apellido|default:registro }}</strong><br>El
+        registro no se borrará, pasará al panel de Movimientos.</p>
+    <form method="post">
+        {% csrf_token %}
+        <div class="d-flex gap-2 justify-content-center">
+            <button type="submit" class="btn-warning"
+                style="padding:10px 24px;font-size:0.9rem;border:none;border-radius:var(--radius);"><i
+                    class="bi bi-archive"></i> Archivar</button>
+            <a href="javascript:history.back()" class="btn-siceme-outline">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

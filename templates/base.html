@@ -1,0 +1,224 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="SICEME - Sistema Integral de Control Epidemiológico de Morbilidades y Ecosonogramas">
+    <title>{% block title %}SICEME{% endblock %}</title>
+    <link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}?v=2">
+    <link rel="shortcut icon" type="image/png" href="{% static 'img/favicon.png' %}?v=2">
+    <link rel="apple-touch-icon" href="{% static 'img/favicon.png' %}?v=2">
+    <!-- Google Fonts -->
+    <!-- Google Fonts Optimization -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    </noscript>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- SICEME CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=1.3">
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+    <!-- Sidebar Overlay (Mobile) -->
+    <div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <img src="{% static 'img/favicon.png' %}" alt="SICEME" class="sidebar-logo">
+            <div class="sidebar-brand">
+                <span class="brand-text">SICEME</span>
+                <small class="brand-subtext">Control Epidemiológico</small>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-section d-flex align-items-center justify-content-between">
+                <span class="section-text">Principal</span>
+                <button id="btn-sidebar-toggle" class="btn-sidebar-toggle d-none d-lg-flex" title="Contraer Menú" aria-label="Contraer o expandir menú lateral">
+                    <i class="bi bi-list"></i>
+                </button>
+            </div>
+            <a href="{% url 'dashboard' %}" class="nav-link">
+                <i class="bi bi-grid-1x2-fill"></i> <span class="nav-text">Menu</span>
+            </a>
+
+            <div class="nav-section"><span class="section-text">Morbilidades</span></div>
+            <a href="{% url 'lista_emergencias' %}" class="nav-link">
+                <i class="bi bi-heart-pulse-fill"></i> <span class="nav-text">Emergencias</span>
+            </a>
+            <a href="{% url 'lista_morbilidad_especialistas' %}" class="nav-link">
+                <i class="bi bi-clipboard2-pulse-fill"></i> <span class="nav-text">Especialistas</span>
+            </a>
+            <a href="{% url 'lista_no_asistidos' %}" class="nav-link">
+                <i class="bi bi-person-x-fill"></i> <span class="nav-text">Pacientes no asistidos de Especialistas</span>
+            </a>
+            <a href="{% url 'lista_ecosonogramas' %}" class="nav-link">
+                <i class="bi bi-broadcast-pin"></i> <span class="nav-text">Ecosonogramas</span>
+            </a>
+
+            {% if user.rol != 'PUBLICO' %}
+            <div class="nav-section"><span class="section-text">Control</span></div>
+            <a href="{% url 'lista_jornadas' %}" class="nav-link">
+                <i class="bi bi-clock-history"></i> <span class="nav-text">Jornadas</span>
+            </a>
+            {% endif %}
+
+            <div class="nav-section"><span class="section-text">Movimientos</span></div>
+            <a href="{% url 'movimientos' %}" class="nav-link">
+                <i class="bi bi-arrow-left-right"></i> <span class="nav-text">Panel de Movimientos</span>
+            </a>
+
+            <div class="nav-section"><span class="section-text">Reportes</span></div>
+            <a href="{% url 'reporte_especialidades' %}" class="nav-link">
+                <i class="bi bi-bar-chart-fill"></i> <span class="nav-text">Por Especialidad</span>
+            </a>
+            <a href="{% url 'reporte_emergencias_mes' %}" class="nav-link">
+                <i class="bi bi-calendar3"></i> <span class="nav-text">Emergencias/Mes</span>
+            </a>
+            <a href="{% url 'reporte_ecosonogramas_enfermedades' %}" class="nav-link">
+                <i class="bi bi-activity"></i> <span class="nav-text">Enfermedades Eco</span>
+            </a>
+            <a href="{% url 'reporte_top_medicos' %}" class="nav-link">
+                <i class="bi bi-trophy-fill"></i> <span class="nav-text">Médicos</span>
+            </a>
+            <a href="{% url 'reporte_periodo' %}" class="nav-link">
+                <i class="bi bi-calendar-range-fill"></i> <span class="nav-text">Reporte por Periodo</span>
+            </a>
+
+            {% if user.rol == 'ADMIN' %}
+            <div class="nav-section"><span class="section-text">Administración</span></div>
+            <a href="{% url 'crud_especialidades' %}" class="nav-link">
+                <i class="bi bi-bookmark-star-fill"></i> <span class="nav-text">Especialidades</span>
+            </a>
+            <a href="{% url 'crud_especialistas' %}" class="nav-link">
+                <i class="bi bi-person-badge-fill"></i> <span class="nav-text">Especialistas</span>
+            </a>
+            <a href="{% url 'lista_usuarios' %}" class="nav-link">
+                <i class="bi bi-people-fill"></i> <span class="nav-text">Usuarios</span>
+            </a>
+            <a href="{% url 'monitor' %}" class="nav-link">
+                <i class="bi bi-eye-fill"></i> <span class="nav-text">Monitor Global</span>
+            </a>
+            <a href="{% url 'bitacora' %}" class="nav-link">
+                <i class="bi bi-journal-text"></i> <span class="nav-text">Bitácora</span>
+            </a>
+            {% endif %}
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="{% url 'perfil' %}" class="nav-link">
+                <i class="bi bi-person-circle"></i> <span class="nav-text">Mi Perfil</span>
+            </a>
+            <a href="{% url 'logout' %}" class="nav-link" style="color: var(--danger);">
+                <i class="bi bi-box-arrow-left"></i> <span class="nav-text">Cerrar Sesión</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Bar -->
+        <header class="top-bar">
+            <div class="top-bar-left">
+                <button id="btn-mobile-toggle" class="btn-toggle-sidebar d-lg-none" aria-label="Abrir menú lateral">
+                    <i class="bi bi-list"></i>
+                </button>
+                <div class="d-md-block">
+                    <h1>{% block page_title %}Menu{% endblock %}</h1>
+                    <p>{% block page_subtitle %}{% endblock %}</p>
+                </div>
+            </div>
+            <div class="top-bar-right">
+                <div class="user-info dropdown position-relative">
+                    <a href="#" class="d-flex align-items-center gap-2 text-decoration-none dropdown-toggle"
+                        id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="color: inherit;">
+                        <div class="user-avatar overflow-hidden">
+                            {% if user.imagen_perfil %}
+                            <img src="{{ user.imagen_perfil.url }}" alt="{{ user.username }}"
+                                style="width: 100%; height: 100%; object-fit: cover;">
+                            {% else %}
+                            {{ user.first_name|default:user.username|truncatechars:1|upper }}
+                            {% endif %}
+                        </div>
+                        <div class="user-details d-none d-md-block text-start">
+                            <div class="user-name">{{ user.get_full_name|default:user.username }}</div>
+                            <div class="user-role">{{ user.get_rol_display }}</div>
+                        </div>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 user-dropdown-menu"
+                        aria-labelledby="userDropdown">
+                        {% with fn=user.get_full_name %}
+                        <li class="dropdown-header px-3 py-2">
+                            <div class="fw-bold">{% firstof fn user.username %}</div>
+                            <div class="small text-muted">{{ user.email }}</div>
+                        </li>
+                        {% endwith %}
+                        <li>
+                            <hr class="dropdown-divider my-1">
+                        </li>
+                        <li>
+                            <a class="dropdown-item py-2" href="{% url 'perfil' %}">
+                                <i class="bi bi-pencil-square me-2" style="color: var(--primary);"></i> Editar Perfil
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item py-2" href="{% url 'cambiar_password' %}">
+                                <i class="bi bi-key-fill me-2" style="color: var(--warning);"></i> Cambiar Contraseña
+                            </a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider my-1">
+                        </li>
+                        <li>
+                            <a class="dropdown-item py-2" href="{% url 'logout' %}" style="color: var(--danger);">
+                                <i class="bi bi-box-arrow-left me-2"></i> Cerrar Sesión
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </header>
+
+        <!-- Content Area -->
+        <div class="content-area">
+            <!-- Messages -->
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert-siceme {{ message.tags }}">
+                <i
+                    class="bi {% if message.tags == 'success' %}bi-check-circle-fill{% elif message.tags == 'error' %}bi-exclamation-triangle-fill{% elif message.tags == 'warning' %}bi-exclamation-circle-fill{% else %}bi-info-circle-fill{% endif %}"></i>
+                {{ message }}
+            </div>
+            {% endfor %}
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" defer></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0" defer></script>
+    <!-- html2canvas -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" defer></script>
+    <!-- SICEME JS -->
+    <script src="{% static 'js/main.js' %}?v=1.5" defer></script>
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

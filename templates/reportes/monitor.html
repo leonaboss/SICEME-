@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+{% block title %}SICEME - Monitor Global{% endblock %}
+{% block page_title %}Monitor de Actividad Global{% endblock %}
+{% block page_subtitle %}Historial de registros y movimientos del sistema{% endblock %}
+
+{% block content %}
+<div class="table-card">
+    <div class="table-card-header d-flex justify-content-between align-items-center bg-white border-bottom py-3">
+        <h3 class="mb-0"><i class="bi bi-clock-history text-primary me-2"></i>Historial de Actividad Reciente</h3>
+        <div class="d-flex align-items-center gap-3">
+            <div class="d-flex align-items-center gap-2 text-muted" style="font-size: 0.85rem;">
+                <span class="pulse-green"></span> Sincronizado en tiempo real
+            </div>
+            <button onclick="location.reload()" class="btn btn-light btn-sm border">
+                <i class="bi bi-arrow-clockwise"></i> Actualizar
+            </button>
+        </div>
+    </div>
+
+    <div class="p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0" style="border-collapse: separate; border-spacing: 0;">
+                <thead class="bg-light text-muted">
+                    <tr>
+                        <th class="ps-4 py-3" style="font-size: 0.75rem; text-transform: uppercase; width: 120px;">Hora / Fecha</th>
+                        <th class="py-3" style="font-size: 0.75rem; text-transform: uppercase; width: 220px;">Responsable</th>
+                        <th class="py-3" style="font-size: 0.75rem; text-transform: uppercase; width: 180px;">Servicio</th>
+                        <th class="py-3" style="font-size: 0.75rem; text-transform: uppercase;">Detalle del Paciente / Acción</th>
+                        <th class="pe-4 py-3 text-end" style="font-size: 0.75rem; text-transform: uppercase;">Estado</th>
+                    </tr>
+                </thead>
+                <tbody class="timeline-body">
+                    {% for item in actividad %}
+                    <tr>
+                        <td class="ps-4">
+                            <div class="fw-bold text-dark mb-0" style="font-size: 0.9rem;">{{ item.created_at|date:"H:i" }}</div>
+                            <small class="text-muted" style="font-size: 0.7rem;">{{ item.created_at|date:"d/m/Y" }}</small>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="avatar-sm bg-primary-subtle text-primary fw-bold">
+                                    {{ item.usuario.username|slice:":1"|upper }}
+                                </div>
+                                <div>
+                                    <div class="fw-semibold text-dark" style="font-size: 0.85rem;">{{ item.usuario.get_full_name|default:item.usuario.username }}</div>
+                                    <span class="badge bg-light text-muted border" style="font-size: 0.65rem;">{{ item.usuario.get_rol_display }}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge 
+                                {% if item.tipo_mov == 'emergencia' %}bg-danger-subtle text-danger border-danger-subtle
+                                {% elif item.tipo_mov == 'especialista' %}bg-purple-subtle text-purple border-purple-subtle
+                                {% elif item.tipo_mov == 'ecosonogramas' or item.tipo_mov == 'ecosonograma' %}bg-info-subtle text-info border-info-subtle
+                                {% else %}bg-warning-subtle text-warning border-warning-subtle{% endif %} 
+                                px-2 py-1 border" style="font-size: 0.7rem; font-weight: 700;">
+                                <i class="bi 
+                                    {% if item.tipo_mov == 'emergencia' %}bi-heart-pulse
+                                    {% elif item.tipo_mov == 'especialista' %}bi-person-badge
+                                    {% elif item.tipo_mov == 'ecosonogramas' or item.tipo_mov == 'ecosonograma' %}bi-broadcast-pin
+                                    {% else %}bi-info-circle{% endif %} me-1"></i>
+                                {{ item.get_tipo_mov_display|upper }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="fw-bold text-secondary mb-0" style="font-size: 0.95rem;">{{ item.nombre_display }}</div>
+                            <small class="text-muted d-block" style="font-size: 0.8rem;">
+                                <i class="bi bi-card-text me-1"></i>{{ item.detalle|default:"Registro procesado correctamente" }}
+                            </small>
+                        </td>
+                        <td class="pe-4 text-end">
+                            <span class="text-success" style="font-size: 0.75rem; font-weight: 600;">
+                                <i class="bi bi-check-circle-fill me-1"></i>Registrado
+                            </span>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center py-5">
+                            <div class="text-muted opacity-50 mb-3"><i class="bi bi-journal-x" style="font-size: 3rem;"></i></div>
+                            <h5 class="text-muted">No hay actividad reciente para mostrar</h5>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-danger-subtle { background-color: #fee2e2; }
+    .text-danger { color: #dc2626; }
+    .border-danger-subtle { border-color: #fecaca; }
+
+    .bg-purple-subtle { background-color: #f5f3ff; }
+    .text-purple { color: #7c3aed; }
+    .border-purple-subtle { border-color: #ddd6fe; }
+
+    .bg-info-subtle { background-color: #e0f2fe; }
+    .text-info { color: #0284c7; }
+    .border-info-subtle { border-color: #bae6fd; }
+
+    .bg-warning-subtle { background-color: #fef3c7; }
+    .text-warning { color: #d97706; }
+    .border-warning-subtle { border-color: #fde68a; }
+
+    .avatar-sm {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        font-size: 0.8rem;
+    }
+
+    .pulse-green {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        background-color: #22c55e;
+        border-radius: 50%;
+        box-shadow: 0 0 0 rgba(34, 197, 94, 0.4);
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); }
+        70% { box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #f8fafc;
+        cursor: default;
+    }
+
+    .timeline-body tr {
+        transition: all 0.2s ease;
+    }
+</style>
+{% endblock %}

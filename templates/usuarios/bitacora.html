@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% block title %}SICEME - Bitácora de Auditoría{% endblock %}
+{% block page_title %}Bitácora de Auditoría{% endblock %}
+{% block page_subtitle %}Registro inmutable de acciones del sistema{% endblock %}
+{% block content %}
+<div class="filters-bar">
+    <form method="get" class="d-flex flex-wrap gap-2 align-items-end w-100">
+        <div>
+            <label class="form-label small fw-semibold">Usuario</label>
+            <select name="usuario" class="form-select" style="max-width:180px;">
+                <option value="">Todos</option>
+                {% for u in usuarios_lista %}
+                {% if filtros.usuario == u.pk|stringformat:"d" %}
+                <option value="{{ u.pk }}" selected>{{ u.username }}</option>
+                {% else %}
+                <option value="{{ u.pk }}">{{ u.username }}</option>
+                {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <label class="form-label small fw-semibold">Acción</label>
+            <select name="accion" class="form-select" style="max-width:180px;">
+                <option value="">Todas</option>
+                {% for code, label in acciones %}
+                {% if filtros.accion == code %}
+                <option value="{{ code }}" selected>{{ label }}</option>
+                {% else %}
+                <option value="{{ code }}">{{ label }}</option>
+                {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <label class="form-label small fw-semibold">Desde</label>
+            <input type="date" name="fecha_desde" value="{{ filtros.fecha_desde }}" class="form-control">
+        </div>
+        <div>
+            <label class="form-label small fw-semibold">Hasta</label>
+            <input type="date" name="fecha_hasta" value="{{ filtros.fecha_hasta }}" class="form-control">
+        </div>
+        <div class="flex-grow-1" style="min-width: 250px;">
+            <label class="form-label small fw-semibold">Búsqueda libre</label>
+            <div class="input-group">
+                <span class="input-group-text bg-white"><i class="bi bi-search text-muted"></i></span>
+                <input type="text" name="q" placeholder="Buscar por detalle, IP, módulo..." value="{{ filtros.q }}"
+                    class="form-control">
+            </div>
+        </div>
+        <button type="submit" class="btn-siceme btn-sm" style="height: 38px;"><i class="bi bi-funnel"></i>
+            Filtrar</button>
+    </form>
+</div>
+
+<div class="table-card">
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Fecha/Hora</th>
+                    <th>Usuario</th>
+                    <th>Acción</th>
+                    <th>Descripción</th>
+                    <th>Módulo</th>
+                    <th>IP</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for reg in registros %}
+                <tr>
+                    <td>{{ reg.fecha_hora|date:"d/m/Y H:i:s" }}</td>
+                    <td>{{ reg.usuario.username|default:"Sistema" }}</td>
+                    <td>
+                        {% if 'FALLIDO' in reg.accion or 'BLOQUEADA' in reg.accion or 'DENEGADO' in reg.accion %}
+                        <span class="badge-status locked">{{ reg.get_accion_display }}</span>
+                        {% else %}
+                        <span class="badge-status active">{{ reg.get_accion_display }}</span>
+                        {% endif %}
+                    </td>
+                    <td style="max-width:300px;">{{ reg.descripcion|truncatewords:12 }}</td>
+                    <td>{{ reg.modulo }}</td>
+                    <td><code>{{ reg.direccion_ip|default:"-" }}</code></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center text-muted py-4">No hay registros</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% if registros.has_other_pages %}
+    <nav class="pagination-container">
+        <ul class="pagination">
+            {% if registros.has_previous %}<li class="page-item"><a class="page-link"
+                    href="?page={{ registros.previous_page_number }}">&laquo;</a></li>{% endif %}
+            {% for num in registros.paginator.page_range %}
+            <li class="page-item {% if registros.number == num %}active{% endif %}"><a class="page-link"
+                    href="?page={{ num }}">{{ num }}</a></li>
+            {% endfor %}
+            {% if registros.has_next %}<li class="page-item"><a class="page-link"
+                    href="?page={{ registros.next_page_number }}">&raquo;</a></li>{% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}

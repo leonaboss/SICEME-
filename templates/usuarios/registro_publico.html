@@ -1,0 +1,69 @@
+{% extends 'base_auth.html' %}
+
+{% block title %}Crear Cuenta{% endblock %}
+
+{% block content %}
+<div class="text-center mb-4">
+    <h3 class="fw-bold" style="color: var(--primary);">Crear Cuenta</h3>
+    <p class="text-muted small">Regístrese para acceder al sistema.</p>
+</div>
+
+<form method="post" class="login-form" autocomplete="off">
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="mb-3">
+        <label for="{{ field.id_for_label }}" class="form-label fw-semibold small">{{ field.label }}</label>
+        {% if field.name == 'password1' or field.name == 'password2' %}
+        <div class="position-relative">
+            {{ field }}
+            <button type="button" id="toggle-{{ field.name }}" class="btn btn-link position-absolute end-0 top-50 translate-middle-y text-decoration-none" style="z-index:5; color: var(--text-muted); font-size: 1.1rem; padding-right: 12px; border: none; background: none;">
+                <i class="bi bi-eye-slash" id="eye-{{ field.name }}"></i>
+            </button>
+        </div>
+        {% else %}
+        {{ field }}
+        {% endif %}
+        {% if field.help_text %}
+        <div class="form-text" style="font-size: 0.75rem;">{{ field.help_text }}</div>
+        {% endif %}
+        {% for error in field.errors %}
+        <div class="text-danger extra-small">{{ error }}</div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn-login mt-2">
+        <i class="bi bi-person-plus-fill"></i> Registrarse
+    </button>
+</form>
+
+<div class="text-center mt-3">
+    <a href="{% url 'login' %}" class="text-decoration-none fw-bold" style="color: var(--primary); font-size: 0.85rem;">
+        ¿Ya tienes cuenta? Inicia sesión
+    </a>
+</div>
+
+<script>
+    function setupToggle(fieldName, inputId) {
+        const btn = document.getElementById('toggle-' + fieldName);
+        const input = document.getElementById(inputId);
+        const icon = document.getElementById('eye-' + fieldName);
+        
+        if (btn && input && icon) {
+            btn.addEventListener('click', function() {
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.classList.replace('bi-eye-slash', 'bi-eye');
+                } else {
+                    input.type = 'password';
+                    icon.classList.replace('bi-eye', 'bi-eye-slash');
+                }
+            });
+        }
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        setupToggle('password1', 'registro-password1');
+        setupToggle('password2', 'registro-password2');
+    });
+</script>
+{% endblock %}

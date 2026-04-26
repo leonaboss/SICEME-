@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block title %}SICEME - Especialistas{% endblock %}
+{% block page_title %}Especialistas{% endblock %}
+{% block page_subtitle %}Gestión de médicos especialistas{% endblock %}
+{% block content %}
+<div class="table-card">
+    <div class="table-card-header">
+        <h3><i class="bi bi-person-badge-fill" style="color:var(--info)"></i> Médicos Especialistas</h3>
+        <div class="d-flex gap-2">
+            <form method="get" class="search-box">
+                <i class="bi bi-search"></i>
+                <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="Buscar..."
+                    style="width:220px;">
+            </form>
+            <a href="{% url 'crear_especialista' %}" class="btn-siceme"><i class="bi bi-plus-circle"></i> Nuevo</a>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Especialidad</th>
+                    <th>Cédula</th>
+                    <th>Usuario</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for esp in especialistas %}
+                <tr>
+                    <td><strong>{{ esp.nombre_completo }}</strong></td>
+                    <td>{{ esp.especialidad.nombre }}</td>
+                    <td>{{ esp.cedula|default:"-" }}</td>
+                    <td>{{ esp.usuario.username|default:"-" }}</td>
+                    <td>
+                        <div class="d-flex gap-1">
+                            <a href="{% url 'editar_especialista' esp.pk %}" class="btn-info-sm"><i
+                                    class="bi bi-pencil"></i></a>
+                            <a href="{% url 'eliminar_especialista' esp.pk %}" class="btn-danger-sm"><i
+                                    class="bi bi-trash"></i></a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center text-muted py-4">Sin especialistas</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% if especialistas.has_other_pages %}
+    <nav class="pagination-container">
+        <ul class="pagination">
+            {% if especialistas.has_previous %}<li class="page-item"><a class="page-link"
+                    href="?page={{ especialistas.previous_page_number }}">&laquo;</a></li>{% endif %}
+            {% for num in especialistas.paginator.page_range %}
+            <li class="page-item {% if especialistas.number == num %}active{% endif %}"><a class="page-link"
+                    href="?page={{ num }}">{{ num }}</a></li>
+            {% endfor %}
+            {% if especialistas.has_next %}<li class="page-item"><a class="page-link"
+                    href="?page={{ especialistas.next_page_number }}">&raquo;</a></li>{% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}

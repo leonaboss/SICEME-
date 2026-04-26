@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}SICEME - Emergencias por Mes{% endblock %}
+{% block page_title %}Emergencias por Mes{% endblock %}
+{% block page_subtitle %}Año {{ anio }}{% endblock %}
+{% block content %}
+<div class="filters-bar">
+    <form method="get" class="d-flex gap-2 align-items-end">
+        <div>
+            <label class="form-label small fw-semibold">Año</label>
+            <input type="number" name="anio" value="{{ anio }}" class="form-control" style="width:120px;">
+        </div>
+        <button type="submit" class="btn-siceme btn-sm"><i class="bi bi-funnel"></i> Filtrar</button>
+        <a href="{% url 'exportar_excel' %}?tipo=emergencias&anio={{ anio }}" class="btn-siceme-outline btn-sm"><i
+                class="bi bi-file-earmark-excel"></i> Excel</a>
+        <button type="button" onclick="descargarReporteImagen('reporte-contenido', 'emergencias_mes_{{ anio }}.png')" class="btn-siceme-outline btn-sm">
+            <i class="bi bi-download"></i> Descargar Imagen
+        </button>
+    </form>
+</div>
+<div id="reporte-contenido">
+<div class="table-card">
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Mes</th>
+                    <th>Especialidad</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for e in emergencias %}
+                <tr>
+                    <td><strong>{{ e.mes_nombre }}</strong></td>
+                    <td>{{ e.especialidad__nombre }}</td>
+                    <td><span class="badge-status active">{{ e.total }}</span></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" class="text-center text-muted py-4">Sin datos</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+</div>
+{% block extra_js %}
+<script>
+function descargarReporteImagen(elementId, filename) {
+    const el = document.getElementById(elementId);
+    html2canvas(el, { scale: 2, useCORS: true }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = filename;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    });
+}
+</script>
+{% endblock %}
+{% endblock %}

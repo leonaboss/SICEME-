@@ -1,0 +1,330 @@
+{% extends 'base.html' %}
+{% block title %}SICEME - Movimientos{% endblock %}
+{% block page_title %}Movimientos{% endblock %}
+{% block page_subtitle %}Panel de actividad y registros archivados — {{ mes_nombre }} {{ anio }}{% endblock %}
+{% block content %}
+
+<!-- Tarjetas de Resumen -->
+<div class="row mb-4">
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="stat-card">
+            <div class="stat-icon" style="background:linear-gradient(135deg,#6366F1,#818CF8)">
+                <i class="bi bi-people-fill"></i>
+            </div>
+            <div class="stat-info">
+                <span class="stat-number">{{ pacientes_atendidos }}</span>
+                <span class="stat-label">Pacientes Atendidos</span>
+                <small class="text-muted">Este mes</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="stat-card">
+            <div class="stat-icon" style="background:linear-gradient(135deg,#F59E0B,#FBBF24)">
+                <i class="bi bi-person-x-fill"></i>
+            </div>
+            <div class="stat-info">
+                <span class="stat-number">{{ no_asistidos_mes }}</span>
+                <span class="stat-label">Pacientes no asistidos de Especialistas</span>
+                <small class="text-muted">Este mes</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="stat-card">
+            <div class="stat-icon" style="background:linear-gradient(135deg,#EF4444,#F87171)">
+                <i class="bi bi-archive-fill"></i>
+            </div>
+            <div class="stat-info">
+                <span class="stat-number">{{ total_archivados }}</span>
+                <span class="stat-label">Archivados</span>
+                <small class="text-muted">Total</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="stat-card">
+            <div class="stat-icon" style="background:linear-gradient(135deg,#10B981,#34D399)">
+                <i class="bi bi-activity"></i>
+            </div>
+            <div class="stat-info">
+                <span class="stat-number">{{ registros_activos_mes }}</span>
+                <span class="stat-label">Registros Activos</span>
+                <small class="text-muted">Este mes</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Timeline de Actividad -->
+<div class="table-card mb-4">
+    <div class="table-card-header d-flex justify-content-between align-items-center">
+        <h3><i class="bi bi-clock-history" style="color:var(--primary)"></i> Actividad Reciente</h3>
+        {% if timeline %}
+        <button type="button" class="btn-siceme btn-sm" data-bs-toggle="modal"
+            data-bs-target="#modalLimpiarActividad" style="background-color: var(--warning); border-color: var(--warning); color: #000;">
+            <i class="bi bi-eraser-fill"></i> Limpiar Todo
+        </button>
+        {% endif %}
+    </div>
+    <div class="p-3">
+        {% for item in timeline %}
+        <div class="d-flex align-items-center gap-3 p-2 mb-2 timeline-item timeline-{{ item.tipo_mov }}">
+            <div class="timeline-icon timeline-icon-{{ item.tipo_mov }}">
+                {% if item.tipo_mov == 'emergencia' %}
+                <i class="bi bi-heart-pulse"></i>
+                {% elif item.tipo_mov == 'especialista' %}
+                <i class="bi bi-clipboard2-pulse"></i>
+                {% elif item.tipo_mov == 'ecosonograma' %}
+                <i class="bi bi-broadcast"></i>
+                {% else %}
+                <i class="bi bi-person-x"></i>
+                {% endif %}
+            </div>
+            <div class="flex-grow-1">
+                <strong>{{ item.nombre_display }}</strong>
+                <span class="badge badge-tipo-{{ item.tipo_mov }}">
+                    {% if item.tipo_mov == 'emergencia' %}
+                    Emergencia
+                    {% elif item.tipo_mov == 'especialista' %}
+                    Especialista
+                    {% elif item.tipo_mov == 'ecosonograma' %}
+                    Ecosonograma
+                    {% else %}
+                    No Asistido
+                    {% endif %}
+                </span>
+                <br>
+                <small class="text-muted">{{ item.detalle }}</small>
+                {% if user.rol == 'ADMIN' %}
+                <div class="d-flex align-items-center gap-2 mt-1 py-1 px-2 rounded-2" style="background: rgba(91, 33, 182, 0.05); width: fit-content;">
+                    <small class="text-primary fw-bold" style="font-size: 0.8rem;">
+                        <i class="bi bi-person-circle me-1"></i>{{ item.usuario.get_full_name|default:item.usuario.username }}
+                    </small>
+                    <span class="badge bg-white text-primary border border-primary-subtle" style="font-size: 0.65rem; font-weight: 700; text-transform: uppercase;">
+                        {{ item.usuario.get_rol_display }}
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+            <small class="text-muted" style="white-space:nowrap;">{{ item.created_at|date:"d/m/Y H:i" }}</small>
+        </div>
+        {% empty %}
+        <div class="text-center text-muted py-4">
+            <i class="bi bi-inbox" style="font-size:2rem;display:block;opacity:0.5;margin-bottom:0.5rem;"></i>
+            Sin actividad reciente
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Registros Archivados -->
+<div class="table-card">
+    <div class="table-card-header d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+        <div class="d-flex align-items-center">
+            <h3 class="mb-0"><i class="bi bi-archive-fill" style="color:var(--danger)"></i> Registros Archivados
+                <span class="badge bg-danger">{{ total_archivados }}</span>
+            </h3>
+        </div>
+        
+        <div class="d-flex gap-2 flex-grow-1 justify-content-md-end">
+            <!-- Buscador de Archivados -->
+            <form method="get" action="{% url 'movimientos' %}" class="d-flex gap-1" style="max-width: 300px;">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                    <input type="text" name="q_archivados" class="form-control border-start-0" placeholder="Buscar en papelera..." value="{{ q_archivados|default:'' }}">
+                    <button type="submit" class="btn btn-outline-secondary">Ir</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Tipo</th>
+                    <th>Nombre Paciente</th>
+                    {% if user.rol == 'ADMIN' %}<th>Usuario</th>{% endif %}
+                    <th>Fecha Registro</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for reg in archivados %}
+                <tr>
+                    <td>
+                        <span class="badge badge-tipo-{{ reg.tipo_mov }}">
+                            {% if reg.tipo_mov == 'emergencia' %}
+                            <i class="bi bi-heart-pulse me-1"></i>Emergencia
+                            {% endif %}
+                            {% if reg.tipo_mov == 'especialista' %}
+                            <i class="bi bi-clipboard2-pulse me-1"></i>Especialista
+                            {% endif %}
+                            {% if reg.tipo_mov == 'ecosonograma' %}
+                            <i class="bi bi-broadcast me-1"></i>Ecosonograma
+                            {% endif %}
+                            {% if reg.tipo_mov == 'no_asistido' %}
+                            <i class="bi bi-person-x me-1"></i>No Asistido
+                            {% endif %}
+                        </span>
+                    </td>
+                    <td><strong>{{ reg.nombre_display }}</strong></td>
+                    {% if user.rol == 'ADMIN' %}
+                    <td>
+                        <div class="d-flex flex-column">
+                            <span class="fw-medium" style="font-size: 0.85rem;">
+                                {{ reg.usuario.get_full_name|default:reg.usuario.username }}
+                            </span>
+                            <span class="text-muted" style="font-size: 0.75rem;">
+                                <i class="bi bi-tag-fill me-1"></i>{{ reg.usuario.get_rol_display }}
+                            </span>
+                        </div>
+                    </td>
+                    {% endif %}
+                    <td>{{ reg.created_at|date:"d/m/Y H:i" }}</td>
+                    <td>
+                        <div class="d-flex gap-1">
+                            <form method="post" action="{% url 'restaurar_registro' %}" class="d-inline">
+                                {% csrf_token %}
+                                <input type="hidden" name="tipo" value="{{ reg.tipo_mov }}">
+                                <input type="hidden" name="pk" value="{{ reg.pk }}">
+                                <button type="submit" class="btn-info-sm" title="Restaurar">
+                                    <i class="bi bi-arrow-counterclockwise"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="{% if user.rol == 'ADMIN' %}5{% else %}4{% endif %}"
+                        class="text-center text-muted py-4">
+                        <i class="bi bi-check-circle"
+                            style="font-size:2rem;display:block;opacity:0.5;margin-bottom:0.5rem;color:#10B981;"></i>
+                        {% if q_archivados %}
+                            No se encontraron resultados para "{{ q_archivados }}"
+                        {% else %}
+                            No hay registros archivados
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</div>
+
+
+<!-- Modal Limpiar Actividad Global -->
+<div class="modal fade" id="modalLimpiarActividad" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-eraser" style="color:var(--warning)"></i>
+                    Limpiar Historial Global
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Está seguro de que desea <strong>Limpiar Todo</strong> el historial visible de actividad?</p>
+                <div class="alert alert-info py-2 mb-0">
+                    <i class="bi bi-info-circle-fill me-2"></i>
+                    <small>Se limpiará completamente la actividad reciente en todos los módulos (Emergencias, Especialistas, Pacientes no asistidos de Especialistas y Ecosonogramas) pero los registros se mantendrán guardados en la sección de "Registros Archivados".</small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form method="post" action="{% url 'limpiar_actividad_global' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-siceme" style="background-color: var(--warning); border-color: var(--warning); color: #000;">
+                        <i class="bi bi-eraser-fill"></i> Limpiar Todo
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Timeline items */
+    .timeline-item {
+        border-radius: 0 8px 8px 0;
+        background: rgba(0, 0, 0, 0.02);
+    }
+
+    .timeline-emergencia {
+        border-left: 3px solid #EF4444;
+    }
+
+    .timeline-especialista {
+        border-left: 3px solid #8B5CF6;
+    }
+
+    .timeline-ecosonograma {
+        border-left: 3px solid #06B6D4;
+    }
+
+    .timeline-no_asistido {
+        border-left: 3px solid #F59E0B;
+    }
+
+    /* Timeline icons */
+    .timeline-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        color: white;
+    }
+
+    .timeline-icon-emergencia {
+        background: #EF4444;
+    }
+
+    .timeline-icon-especialista {
+        background: #8B5CF6;
+    }
+
+    .timeline-icon-ecosonograma {
+        background: #06B6D4;
+    }
+
+    .timeline-icon-no_asistido {
+        background: #F59E0B;
+    }
+
+    /* Badges by type */
+    .badge-tipo-emergencia {
+        background: #FEE2E2;
+        color: #991B1B;
+        font-size: 0.65rem;
+    }
+
+    .badge-tipo-especialista {
+        background: #EDE9FE;
+        color: #5B21B6;
+        font-size: 0.65rem;
+    }
+
+    .badge-tipo-ecosonograma {
+        background: #CFFAFE;
+        color: #155E75;
+        font-size: 0.65rem;
+    }
+
+    .badge-tipo-no_asistido {
+        background: #FEF3C7;
+        color: #92400E;
+        font-size: 0.65rem;
+    }
+</style>
+{% endblock %}
