@@ -1058,16 +1058,22 @@ def movimientos_view(request):
     # ── Timeline de actividad reciente (últimos 20 movimientos activos) ──
     timeline = Movimiento.objects.filter(activo=True, **filtro_usuario).order_by('-created_at')[:20]
 
-    # ── Registros Archivados ──
+    # ── Registros Archivados Recientemente (Papelera) ──
     q_archivados = request.GET.get('q_archivados', '')
     archivados = Movimiento.objects.filter(activo=False, **filtro_usuario).order_by('-created_at')
     
     if q_archivados:
         archivados = archivados.filter(nombre_display__icontains=q_archivados)
+    
+    # Limitamos a los últimos 50 para rendimiento
+    archivados = archivados[:50]
 
-    # Nombres de meses
-    MESES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-             'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+    MESES_LISTA = [
+        (1, 'Enero'), (2, 'Febrero'), (3, 'Marzo'), (4, 'Abril'),
+        (5, 'Mayo'), (6, 'Junio'), (7, 'Julio'), (8, 'Agosto'),
+        (9, 'Septiembre'), (10, 'Octubre'), (11, 'Noviembre'), (12, 'Diciembre')
+    ]
+    MESES_DICT = dict(MESES_LISTA)
 
     context = {
         'pacientes_atendidos': pacientes_atendidos,
@@ -1080,10 +1086,255 @@ def movimientos_view(request):
         'timeline': timeline,
         'archivados': archivados,
         'q_archivados': q_archivados,
-        'mes_nombre': MESES[hoy.month - 1],
+        'mes_nombre': MESES_DICT.get(hoy.month),
         'anio': hoy.year,
     }
     return render(request, 'reportes/movimientos.html', context)
+
+@login_required
+@rol_requerido('ADMIN')
+def biblioteca_view(request):
+    """
+    Vista de la Biblioteca Histórica (Solo Administrador).
+    Muestra los cierres de mes realizados y permite navegar por ellos.
+    """
+    from .models import CierreMes
+    
+    cierres = CierreMes.objects.all()
+    
+    # Detección de meses para carpetas (Forma Robusta compatible con cualquier MySQL)
+    from django.db.models import Count
+    movimientos_archivados = Movimiento.objects.filter(activo=False).only('created_at')
+    
+    biblioteca_estructurada = {}
+    MESES_LISTA = [
+        (1, 'Enero'), (2, 'Febrero'), (3, 'Marzo'), (4, 'Abril'),
+        (5, 'Mayo'), (6, 'Junio'), (7, 'Julio'), (8, 'Agosto'),
+        (9, 'Septiembre'), (10, 'Octubre'), (11, 'Noviembre'), (12, 'Diciembre')
+    ]
+    MESES_DICT = dict(MESES_LISTA)
+
+    for m in movimientos_archivados:
+        if m.created_at:
+            anio = str(m.created_at.year)
+            mes_num = m.created_at.month
+            
+            if anio not in biblioteca_estructurada:
+                biblioteca_estructurada[anio] = {}
+            
+            if mes_num not in biblioteca_estructurada[anio]:
+                biblioteca_estructurada[anio][mes_num] = {
+                    'mes_num': mes_num,
+                    'mes_nombre': MESES_DICT.get(mes_num, 'Desconocido'),
+                    'total': 0
+                }
+            
+            biblioteca_estructurada[anio][mes_num]['total'] += 1
+
+    # Convertir los diccionarios internos a listas ordenadas para el template
+    for anio in biblioteca_estructurada:
+        meses_lista_anio = list(biblioteca_estructurada[anio].values())
+        # Ordenar meses de mayor a menor
+        meses_lista_anio.sort(key=lambda x: x['mes_num'], reverse=True)
+        biblioteca_estructurada[anio] = meses_lista_anio
+
+    # Filtros para la lista detallada
+    mes_filtro = request.GET.get('mes')
+    anio_filtro = request.GET.get('anio')
+    q = request.GET.get('q', '')
+    
+    archivados = Movimiento.objects.filter(activo=False).order_by('-created_at')
+    
+    if mes_filtro:
+        archivados = archivados.filter(created_at__month=mes_filtro)
+    if anio_filtro:
+        archivados = archivados.filter(created_at__year=anio_filtro)
+    if q:
+        archivados = archivados.filter(nombre_display__icontains=q)
+
+    context = {
+        'cierres': cierres,
+        'biblioteca': biblioteca_estructurada,
+        'archivados': archivados,
+        'meses_lista': MESES_LISTA,
+        'filtros': {
+            'mes': int(mes_filtro) if mes_filtro else None,
+            'anio': anio_filtro,
+            'q': q,
+            'mes_nombre': MESES_DICT.get(int(mes_filtro)) if mes_filtro else None
+        }
+    }
+    return render(request, 'reportes/biblioteca.html', context)
+
+@login_required
+@rol_requerido('ADMIN', 'ESPECIALISTA')
+def restaurar_masivo_view(request):
+    """Restaurar una cantidad específica de registros archivados recientemente."""
+    from django.db import transaction
+    if request.method == 'POST':
+        cantidad_str = request.POST.get('cantidad')
+        try:
+            cantidad = int(cantidad_str)
+            if cantidad <= 0:
+                raise ValueError
+        except (ValueError, TypeError):
+            messages.error(request, 'Por favor, ingrese una cantidad válida de registros a restaurar.')
+            return redirect(request.META.get('HTTP_REFERER', 'movimientos'))
+            
+        # Filtro de usuario si no es admin
+        filtro_usuario = {}
+        if request.user.rol != 'ADMIN':
+            filtro_usuario['usuario'] = request.user
+            
+        # Obtener los últimos N movimientos archivados
+        movs_a_restaurar = Movimiento.objects.filter(activo=False, **filtro_usuario).order_by('-created_at')[:cantidad]
+        total = movs_a_restaurar.count()
+        
+        if total == 0:
+            messages.info(request, 'No hay registros archivados para restaurar.')
+            return redirect(request.META.get('HTTP_REFERER', 'movimientos'))
+            
+        with transaction.atomic():
+            for mov in movs_a_restaurar:
+                # Restaurar el original
+                obj = mov.registro_original
+                if obj:
+                    obj.activo = True
+                    obj.save()
+                # Restaurar el movimiento
+                mov.activo = True
+                mov.save()
+        
+        BitacoraAuditoria.registrar(
+            request.user, BitacoraAuditoria.Accion.EDITAR,
+            f'Restauración masiva realizada: {total} registros recuperados', request, 'reportes'
+        )
+        messages.success(request, f'¡Éxito! Se han restaurado los últimos {total} registros correctamente.')
+        
+    return redirect(request.META.get('HTTP_REFERER', 'movimientos'))
+
+@login_required
+@rol_requerido('ADMIN')
+def cerrar_mes_view(request):
+    """
+    Acción para realizar el cierre formal de un mes.
+    Archiva todos los registros activos del mes/año seleccionado.
+    """
+    from .models import CierreMes
+    if request.method == 'POST':
+        mes = int(request.POST.get('mes'))
+        anio = int(request.POST.get('anio'))
+        
+        # 1. Identificar registros activos de ese mes
+        # Buscamos en todos los modelos de morbilidad
+        m_emergencia = MorbilidadEmergencia.objects.filter(activo=True, fecha_diagnostico__month=mes, fecha_diagnostico__year=anio)
+        m_especialista = MorbilidadEspecialista.objects.filter(activo=True, created_at__month=mes, created_at__year=anio)
+        m_no_asistido = PacienteNoAsistido.objects.filter(activo=True, created_at__month=mes, created_at__year=anio)
+        m_eco = MorbilidadEcosonograma.objects.filter(activo=True, fecha__month=mes, fecha__year=anio)
+        
+        total = m_emergencia.count() + m_especialista.count() + m_no_asistido.count() + m_eco.count()
+        
+        if total == 0:
+            messages.warning(request, f'No se encontraron registros activos para el mes {mes}/{anio}.')
+            return redirect('biblioteca')
+            
+        with transaction.atomic():
+            # 2. Archivar (Soft Delete)
+            m_emergencia.update(activo=False)
+            m_especialista.update(activo=False)
+            m_no_asistido.update(activo=False)
+            m_eco.update(activo=False)
+            
+            # Sincronizar Movimientos (asegurar que activo=False)
+            Movimiento.objects.filter(
+                created_at__month=mes, created_at__year=anio
+            ).update(activo=False)
+            
+            # 3. Crear el registro de Cierre
+            CierreMes.objects.update_or_create(
+                mes=mes, anio=anio,
+                defaults={
+                    'usuario_cierre': request.user,
+                    'total_registros': total
+                }
+            )
+            
+            BitacoraAuditoria.registrar(
+                request.user, BitacoraAuditoria.Accion.EDITAR,
+                f'Cierre Mensual formalizado: {mes}/{anio} ({total} registros)', request, 'reportes'
+            )
+            messages.success(request, f'¡Cierre de mes {mes}/{anio} completado con éxito! {total} registros movidos a la Biblioteca.')
+        
+    return redirect('biblioteca')
+
+@login_required
+@rol_requerido('ADMIN')
+def auto_organizar_biblioteca_view(request):
+    """
+    Escanea TODOS los registros (activos e inactivos) y los organiza en la biblioteca 
+    según su fecha clínica real. Corrige carpetas mal ubicadas.
+    """
+    from django.db import transaction
+    from django.contrib.contenttypes.models import ContentType
+    hoy = timezone.now()
+    inicio_mes = hoy.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    
+    with transaction.atomic():
+        def reindexar_tipo(model_class, campo_fecha):
+            # Procesamos TODO (tanto activos como ya archivados)
+            registros = model_class.objects.all()
+            count_cambios = 0
+            ct = ContentType.objects.get_for_model(model_class)
+            
+            for obj in registros:
+                fecha_real = getattr(obj, campo_fecha)
+                if not fecha_real: continue
+                
+                # Normalizar fecha_real a datetime si es date para la comparación
+                from datetime import date, datetime
+                if isinstance(fecha_real, date) and not isinstance(fecha_real, datetime):
+                    fecha_comp = datetime.combine(fecha_real, datetime.min.time())
+                    # Hacer aware si el sistema usa zonas horarias
+                    from django.utils import timezone
+                    if timezone.is_aware(inicio_mes):
+                        fecha_comp = timezone.make_aware(fecha_comp)
+                else:
+                    fecha_comp = fecha_real
+
+                # 1. Si es antiguo y estaba activo, lo archivamos
+                if obj.activo and fecha_comp < inicio_mes:
+                    obj.activo = False
+                    obj.save()
+                
+                # 2. Sincronizar el Movimiento para que aparezca en la carpeta correcta
+                # Buscamos el movimiento asociado a este registro
+                movs = Movimiento.objects.filter(content_type=ct, object_id=obj.pk)
+                for m in movs:
+                    # Si la fecha del movimiento no coincide con la del paciente, corregimos
+                    if m.created_at.year != fecha_real.year or m.created_at.month != fecha_real.month or m.activo != obj.activo:
+                        m.created_at = fecha_real
+                        m.activo = obj.activo
+                        m.save()
+                        count_cambios += 1
+            return count_cambios
+
+        c1 = reindexar_tipo(MorbilidadEmergencia, 'fecha_diagnostico')
+        c2 = reindexar_tipo(MorbilidadEcosonograma, 'fecha')
+        c3 = reindexar_tipo(MorbilidadEspecialista, 'created_at')
+        c4 = reindexar_tipo(PacienteNoAsistido, 'fecha_cita')
+        
+        total = c1 + c2 + c3 + c4
+        
+        if total > 0:
+            BitacoraAuditoria.registrar(
+                request.user, BitacoraAuditoria.Accion.EDITAR,
+                f'Re-indexación completa de Biblioteca: {total} movimientos corregidos', request, 'reportes'
+            )
+            messages.success(request, f'¡Sincronización completa! Se han re-organizado {total} registros en sus meses originales.')
+        else:
+            messages.info(request, 'Toda la biblioteca ya está correctamente organizada por fechas.')
+            
+    return redirect('biblioteca')
 
 
 @login_required

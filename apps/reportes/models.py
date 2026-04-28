@@ -46,3 +46,27 @@ class Movimiento(models.Model):
 
     def __str__(self):
         return f"{self.get_tipo_mov_display()} - {self.nombre_display} ({self.created_at.strftime('%d/%m/%Y')})"
+class CierreMes(models.Model):
+    """
+    Registro formal de cierre de mes para la Biblioteca Histórica.
+    """
+    mes = models.PositiveIntegerField()
+    anio = models.PositiveIntegerField()
+    fecha_cierre = models.DateTimeField('Fecha de Cierre', auto_now_add=True)
+    usuario_cierre = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.SET_NULL, 
+        null=True,
+        related_name='cierres_realizados'
+    )
+    total_registros = models.IntegerField(default=0)
+    
+    class Meta:
+        verbose_name = 'Cierre de Mes'
+        verbose_name_plural = 'Cierres de Meses'
+        unique_together = ['mes', 'anio']
+        ordering = ['-anio', '-mes']
+
+    def __str__(self):
+        meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+        return f"Cierre {meses[self.mes-1]} {self.anio}"

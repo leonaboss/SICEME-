@@ -1,0 +1,301 @@
+{% extends 'base.html' %}
+{% block title %}SICEME - Biblioteca Histórica{% endblock %}
+{% block page_title %}Biblioteca Histórica{% endblock %}
+{% block page_subtitle %}Gestión de cierres mensuales y archivos clínicos{% endblock %}
+
+{% block content %}
+<!-- Botón Cierre de Mes (Solo Admin) -->
+<div class="row mb-4">
+    <div class="col-12 d-flex justify-content-end gap-2">
+        <form action="{% url 'auto_organizar_biblioteca' %}" method="post" onsubmit="return confirm('¿Deseas organizar automáticamente todos los registros antiguos? Se enviarán a sus respectivas carpetas mensuales.');">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline-primary shadow-sm">
+                <i class="bi bi-magic"></i> Auto-Organizar por Fecha
+            </button>
+        </form>
+        <button type="button" class="btn-siceme shadow-sm" data-bs-toggle="modal" data-bs-target="#modalCerrarMes">
+            <i class="bi bi-lock-fill"></i> Realizar Cierre de Mes
+        </button>
+    </div>
+</div>
+
+<!-- Estilos Premium para el Archivador Clínico -->
+<style>
+    :root {
+        --folder-color: #f3d4a0;
+        --folder-color-dark: #e6c288;
+        --clinical-blue: #0ea5e9;
+    }
+
+    .archivador-container {
+        background: #f1f5f9;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .cajon-anio {
+        background: white;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        border-left: 8px solid var(--clinical-blue);
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    }
+
+    .cajon-header {
+        padding: 15px 25px;
+        border-bottom: 1px solid #f1f5f9;
+        display: flex;
+        align-items: center;
+        background: #fafafa;
+        border-radius: 15px 15px 0 0;
+    }
+
+    .folder-wrapper {
+        perspective: 1000px;
+        transition: transform 0.3s ease;
+    }
+
+    .clinical-folder {
+        position: relative;
+        width: 100%;
+        height: 140px;
+        background: var(--folder-color);
+        border-radius: 0 10px 10px 10px;
+        box-shadow: 4px 4px 0 var(--folder-color-dark);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    /* Pestaña de la carpeta */
+    .clinical-folder::before {
+        content: '';
+        position: absolute;
+        top: -15px;
+        left: 0;
+        width: 60px;
+        height: 20px;
+        background: var(--folder-color);
+        border-radius: 8px 8px 0 0;
+    }
+
+    .clinical-folder:hover {
+        transform: rotateX(10deg) translateY(-5px);
+        background: #fce7c2;
+    }
+
+    .folder-label {
+        font-weight: 800;
+        color: #856404;
+        font-size: 1.1rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        z-index: 2;
+    }
+
+    .folder-count {
+        background: rgba(255,255,255,0.5);
+        padding: 2px 10px;
+        border-radius: 10px;
+        font-size: 0.8rem;
+        margin-top: 5px;
+        color: #856404;
+        border: 1px solid rgba(133, 100, 4, 0.2);
+    }
+
+    .folder-decoration {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        opacity: 0.1;
+        font-size: 3rem;
+    }
+
+    .active-folder {
+        background: #fde68a !important;
+        border: 2px solid var(--clinical-blue);
+        box-shadow: 0 0 15px rgba(14, 165, 233, 0.3);
+    }
+</style>
+
+<!-- Biblioteca de Morbilidades (Diseño de Archivador) -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="table-card p-4">
+            <h3 class="mb-4"><i class="bi bi-archive-fill text-primary"></i> Archivador Clínico de Morbilidades</h3>
+            
+            <div class="archivador-container">
+                {% if biblioteca %}
+                    {% for anio, meses in biblioteca.items %}
+                    <div class="cajon-anio">
+                        <div class="cajon-header">
+                            <h4 class="mb-0 fw-bold text-dark"><i class="bi bi-hdd-stack-fill me-2 text-secondary"></i> Cajón: {{ anio }}</h4>
+                        </div>
+                        <div class="p-4">
+                            <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 g-4">
+                                {% for m in meses %}
+                                <div class="col">
+                                    <a href="?mes={{ m.mes_num }}&anio={{ anio }}#seccion-detalles" class="text-decoration-none folder-wrapper">
+                                        <div class="clinical-folder {% if filtros.mes == m.mes_num and filtros.anio == anio %}active-folder{% endif %}">
+                                            <div class="folder-label">{{ m.mes_nombre }}</div>
+                                            <div class="folder-count">{{ m.total }} registros</div>
+                                            <i class="bi bi-file-earmark-text folder-decoration"></i>
+                                        </div>
+                                    </a>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                <div class="text-center py-5" style="border: 2px dashed #cbd5e1; border-radius: 15px; background: rgba(255,255,255,0.5);">
+                    <div class="mb-3">
+                        <i class="bi bi-magic text-primary" style="font-size: 3.5rem;"></i>
+                    </div>
+                    <h4 class="text-dark fw-bold">Tu Archivador está esperando datos</h4>
+                    <p class="text-muted mx-auto" style="max-width: 500px;">
+                        Actualmente tus registros están en las listas de hoy. Para que aparezcan las **Carpetas por Mes y Año**, presiona el botón azul de arriba: <br>
+                        <strong>"🪄 Auto-Organizar por Fecha"</strong>.
+                    </p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Detalle del Archivo Seleccionado (Solo se muestra si se abre una carpeta) -->
+<div class="table-card" id="seccion-detalles">
+    {% if filtros.mes and filtros.anio %}
+    <div class="table-card-header d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+        <div class="d-flex align-items-center flex-grow-1">
+            <h3 class="mb-0 me-3"><i class="bi bi-folder2-open text-primary"></i> 
+                Expediente: {{ filtros.mes_nombre }} {{ filtros.anio }}
+            </h3>
+
+            <!-- Restauración Masiva -->
+            <form method="post" action="{% url 'restaurar_masivo' %}" class="d-flex gap-1 align-items-center ms-2" onsubmit="return confirm('¿Deseas restaurar esta cantidad de registros a la vista activa?');">
+                {% csrf_token %}
+                <div class="input-group" style="width: 240px;">
+                    <span class="input-group-text bg-white text-primary fw-bold" style="font-size: 0.85rem; border-color: #cbd5e1;">Restaurar:</span>
+                    <input type="number" name="cantidad" class="form-control fw-bold text-center" placeholder="0" min="1" required 
+                        style="font-size: 1.1rem; color: var(--primary); border-color: #cbd5e1; background-color: #f8fafc;">
+                    <button type="submit" class="btn btn-primary px-3">
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <div class="d-flex gap-2 justify-content-md-end">
+            <a href="{% url 'biblioteca' %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-x-circle"></i> Cerrar Expediente</a>
+        </div>
+    </div>
+    
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Tipo</th>
+                    <th>Paciente</th>
+                    <th>Fecha Registro</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for reg in archivados %}
+                <tr>
+                    <td>
+                        <span class="badge badge-tipo-{{ reg.tipo_mov }}">
+                            {{ reg.get_tipo_mov_display }}
+                        </span>
+                    </td>
+                    <td><strong>{{ reg.nombre_display }}</strong></td>
+                    <td>{{ reg.created_at|date:"d/m/Y H:i" }}</td>
+                    <td>
+                        <form method="post" action="{% url 'restaurar_registro' %}" class="d-inline">
+                            {% csrf_token %}
+                            <input type="hidden" name="pk" value="{{ reg.pk }}">
+                            <button type="submit" class="btn-info-sm" title="Restaurar">
+                                <i class="bi bi-arrow-counterclockwise"></i> Restaurar
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center py-5 text-muted">Esta carpeta está vacía.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <!-- Estado de Mesa Limpia -->
+    <div class="text-center py-5" style="background: #f8fafc; border-radius: 15px; border: 2px dashed #cbd5e1;">
+        <i class="bi bi-hand-index-thumb text-muted" style="font-size: 3.5rem; opacity: 0.5;"></i>
+        <h4 class="text-muted mt-3">Mesa de Trabajo Limpia</h4>
+        <p class="text-muted">Selecciona una **Carpeta Mensual** del archivador superior para ver sus expedientes.</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Modal Cerrar Mes -->
+<div class="modal fade" id="modalCerrarMes" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title"><i class="bi bi-lock-fill me-2"></i>Cierre de Mes Formal</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{% url 'cerrar_mes' %}" method="post">
+                {% csrf_token %}
+                <div class="modal-body p-4">
+                    <p>Al realizar un cierre de mes:</p>
+                    <ul>
+                        <li>Todos los registros activos del periodo seleccionado se moverán a la <strong>Biblioteca</strong>.</li>
+                        <li>Las tablas principales quedarán limpias para el nuevo periodo.</li>
+                        <li>Se generará un sello de auditoría para este cierre.</li>
+                    </ul>
+                    <div class="row g-3 mt-2">
+                        <div class="col-6">
+                            <label class="form-label">Mes a Cerrar</label>
+                            <select name="mes" class="form-select" required>
+                                {% for m_num, m_nom in meses_lista %}
+                                <option value="{{ m_num }}" {% if m_num == mes_actual %}selected{% endif %}>{{ m_nom }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Año</label>
+                            <input type="number" name="anio" class="form-control" value="{{ anio_actual|default:2026 }}" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger">Confirmar Cierre de Mes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .folder-card { transition: transform 0.3s ease; border-radius: 15px; }
+    .folder-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important; }
+    .folder-icon { position: relative; display: inline-block; }
+    .folder-badge { position: absolute; top: 5px; right: -10px; border: 2px solid white; }
+    
+    .badge-tipo-emergencia { background: #fee2e2; color: #991b1b; }
+    .badge-tipo-especialista { background: #ede9fe; color: #5b21b6; }
+    .badge-tipo-ecosonograma { background: #cffafe; color: #155e75; }
+    .badge-tipo-no_asistido { background: #fef3c7; color: #92400e; }
+</style>
+{% endblock %}

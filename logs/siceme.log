@@ -7253,3 +7253,582 @@ ModuleNotFoundError: No module named 'pandas'
 [2026-04-26 19:03:42,828] INFO django.server basehttp "GET /usuarios/login/?next=/ HTTP/1.1" 302 0
 [2026-04-26 19:03:43,536] INFO django.server basehttp "GET /menu/ HTTP/1.1" 200 22854
 [2026-04-26 19:03:50,716] INFO django.server basehttp "GET /api/dashboard-data/?anio=2026&_=1777244630053 HTTP/1.1" 200 960
+[2026-04-26 19:44:21,256] INFO django.server basehttp "GET / HTTP/1.1" 302 0
+[2026-04-26 19:44:21,947] INFO django.server basehttp "GET /usuarios/login/?next=/ HTTP/1.1" 200 4275
+[2026-04-26 19:44:29,419] INFO django.server basehttp "GET /static/css/style.css HTTP/1.1" 304 0
+[2026-04-26 19:44:43,031] INFO django.server basehttp "GET /usuarios/login/?next=/ HTTP/1.1" 302 0
+[2026-04-26 19:44:43,527] INFO django.server basehttp "GET /menu/ HTTP/1.1" 200 22854
+[2026-04-26 19:44:43,964] INFO django.server basehttp "GET /static/css/style.css?v=1.3 HTTP/1.1" 304 0
+[2026-04-26 19:44:44,431] INFO django.server basehttp "GET /static/js/main.js?v=1.5 HTTP/1.1" 304 0
+[2026-04-26 19:44:46,998] INFO django.server basehttp "GET /api/dashboard-data/?anio=2026&_=1777247086651 HTTP/1.1" 200 960
+[2026-04-26 19:44:52,279] INFO django.server basehttp "GET /usuarios/logout/ HTTP/1.1" 302 0
+[2026-04-26 19:44:52,323] INFO django.server basehttp "GET /usuarios/login/ HTTP/1.1" 200 4531
+[2026-04-26 19:44:52,513] INFO django.server basehttp "GET /static/css/style.css HTTP/1.1" 304 0
+[2026-04-26 19:49:09,034] INFO django.utils.autoreload autoreload Watching for file changes with StatReloader
+[2026-04-26 19:55:01,306] INFO django.server basehttp "GET /usuarios/login/?next=/ HTTP/1.1" 200 4275
+[2026-04-26 19:55:05,456] INFO django.server basehttp "GET /emergencias/ HTTP/1.1" 302 0
+[2026-04-26 19:55:05,474] INFO django.server basehttp "GET /usuarios/login/?next=/emergencias/ HTTP/1.1" 200 4275
+[2026-04-28 08:54:12,268] INFO django.utils.autoreload autoreload Watching for file changes with StatReloader
+[2026-04-28 08:58:46,149] INFO django.server basehttp "GET /usuarios/login/?next=/ HTTP/1.1" 200 4275
+[2026-04-28 08:58:46,582] INFO django.server basehttp "GET /static/css/style.css HTTP/1.1" 304 0
+[2026-04-28 08:58:46,620] INFO django.server basehttp "GET /static/img/logo_unefm.png HTTP/1.1" 304 0
+[2026-04-28 08:59:08,167] INFO django.server basehttp "POST /usuarios/login/?next=/ HTTP/1.1" 302 0
+[2026-04-28 08:59:20,130] INFO django.server basehttp "GET /menu/ HTTP/1.1" 200 23075
+[2026-04-28 08:59:20,900] INFO django.server basehttp "GET /static/img/favicon.png HTTP/1.1" 304 0
+[2026-04-28 08:59:20,950] INFO django.server basehttp "GET /static/css/style.css?v=1.3 HTTP/1.1" 304 0
+[2026-04-28 08:59:22,068] INFO django.server basehttp "GET /static/js/main.js?v=1.5 HTTP/1.1" 304 0
+[2026-04-28 08:59:24,163] INFO django.server basehttp "GET /api/dashboard-data/?anio=2026&_=1777381162402 HTTP/1.1" 200 960
+[2026-04-28 08:59:57,442] INFO django.server basehttp "GET /emergencias/ HTTP/1.1" 200 16544
+[2026-04-28 09:00:02,864] INFO django.server basehttp "GET /emergencias/especialistas/ HTTP/1.1" 200 18535
+[2026-04-28 09:00:06,233] INFO django.server basehttp "GET /emergencias/no-asistidos/ HTTP/1.1" 200 16402
+[2026-04-28 09:00:11,736] INFO django.server basehttp "GET /ecosonogramas/ HTTP/1.1" 200 16713
+[2026-04-28 09:00:37,197] INFO django.server basehttp "GET /emergencias/ HTTP/1.1" 200 16544
+[2026-04-28 09:02:38,454] INFO django.server basehttp "GET /usuarios/logout/ HTTP/1.1" 302 0
+[2026-04-28 09:02:38,476] INFO django.server basehttp "GET /usuarios/login/ HTTP/1.1" 200 4531
+[2026-04-28 09:03:27,441] INFO django.server basehttp "POST /usuarios/login/ HTTP/1.1" 200 4557
+[2026-04-28 09:03:40,542] INFO django.server basehttp "POST /usuarios/login/ HTTP/1.1" 302 0
+[2026-04-28 09:03:40,636] INFO django.server basehttp "GET /menu/ HTTP/1.1" 200 23075
+[2026-04-28 09:03:41,883] INFO django.server basehttp "GET /api/dashboard-data/?anio=2026&_=1777381421651 HTTP/1.1" 200 960
+[2026-04-28 09:03:46,836] INFO django.server basehttp "GET /usuarios/bitacora/ HTTP/1.1" 200 28099
+[2026-04-28 09:05:17,339] INFO django.server basehttp "GET /emergencias/ HTTP/1.1" 200 16544
+[2026-04-28 09:18:41,496] INFO django.server basehttp "POST /reportes/importar-excel/ HTTP/1.1" 302 0
+[2026-04-28 09:18:41,591] INFO django.server basehttp "GET /emergencias/ HTTP/1.1" 200 17073
+[2026-04-28 09:19:19,973] INFO django.server basehttp "POST /reportes/importar-excel/ HTTP/1.1" 302 0
+[2026-04-28 09:19:20,049] INFO django.server basehttp "GET /emergencias/ HTTP/1.1" 200 17073
+[2026-04-28 09:21:00,196] INFO django.server basehttp "GET /usuarios/login/?next=/ HTTP/1.1" 302 0
+[2026-04-28 09:21:00,539] INFO django.server basehttp "GET /menu/ HTTP/1.1" 200 22854
+[2026-04-28 09:21:55,342] INFO django.server basehttp "GET /api/dashboard-data/?anio=2026&_=1777382514388 HTTP/1.1" 200 960
+[2026-04-28 09:23:35,103] INFO django.server basehttp "GET /usuarios/login/?next=/ HTTP/1.1" 302 0
+[2026-04-28 09:23:35,933] INFO django.server basehttp "GET /menu/ HTTP/1.1" 200 22854
+[2026-04-28 09:23:50,478] INFO django.server basehttp "GET /api/dashboard-data/?anio=2026&_=1777382628695 HTTP/1.1" 200 960
+[2026-04-28 09:24:36,950] INFO django.utils.autoreload autoreload Watching for file changes with StatReloader
+[2026-04-28 09:27:33,803] INFO django.utils.autoreload autoreload Watching for file changes with StatReloader
+[2026-04-28 09:27:55,072] INFO django.server basehttp "GET /usuarios/login/?next=/ HTTP/1.1" 302 0
+[2026-04-28 09:27:55,216] INFO django.server basehttp "GET /menu/ HTTP/1.1" 200 22854
+[2026-04-28 09:28:01,117] INFO django.server basehttp "GET /api/dashboard-data/?anio=2026&_=1777382880968 HTTP/1.1" 200 960
+[2026-04-28 09:28:09,387] INFO django.server basehttp "GET /emergencias/ HTTP/1.1" 200 16544
+[2026-04-28 09:28:24,897] INFO django.server basehttp "POST /reportes/importar-excel/ HTTP/1.1" 302 0
+[2026-04-28 09:28:30,265] INFO django.server basehttp "POST /reportes/importar-excel/ HTTP/1.1" 302 0
+[2026-04-28 09:28:30,382] INFO django.server basehttp "GET /emergencias/ HTTP/1.1" 200 17576
+[2026-04-28 09:48:47,288] INFO django.utils.autoreload autoreload Watching for file changes with StatReloader
+[2026-04-28 09:49:23,052] INFO django.server basehttp "GET / HTTP/1.1" 200 22854
+[2026-04-28 09:49:23,105] INFO django.server basehttp - Broken pipe from ('127.0.0.1', 50692)
+[2026-04-28 09:49:26,262] INFO django.server basehttp "GET /api/dashboard-data/?anio=2026&_=1777384165609 HTTP/1.1" 200 960
+[2026-04-28 09:49:30,003] INFO django.server basehttp "GET /static/img/favicon.png?v=2 HTTP/1.1" 304 0
+[2026-04-28 09:49:33,730] INFO django.server basehttp "GET /emergencias/ HTTP/1.1" 200 16544
+[2026-04-28 09:49:49,799] INFO django.server basehttp "POST /reportes/importar-excel/ HTTP/1.1" 302 0
+[2026-04-28 09:49:50,277] INFO django.server basehttp "GET /emergencias/ HTTP/1.1" 200 17073
+[2026-04-28 09:55:42,147] INFO django.utils.autoreload autoreload C:\Users\Leonardo Revilla\Desktop\Morbilidades\apps\reportes\importador.py changed, reloading.
+[2026-04-28 09:55:54,232] INFO django.utils.autoreload autoreload Watching for file changes with StatReloader
+[2026-04-28 10:04:30,957] INFO django.server basehttp "GET /emergencias/ HTTP/1.1" 200 16544
+[2026-04-28 10:04:38,544] INFO django.server basehttp "GET /emergencias/especialistas/ HTTP/1.1" 200 18535
+[2026-04-28 10:04:42,654] INFO django.server basehttp "GET /emergencias/no-asistidos/ HTTP/1.1" 200 16402
+[2026-04-28 10:04:46,576] INFO django.server basehttp "GET /ecosonogramas/ HTTP/1.1" 200 16713
+[2026-04-28 10:04:53,122] INFO django.server basehttp "GET /jornadas/ HTTP/1.1" 200 17925
+[2026-04-28 10:05:03,928] INFO django.server basehttp "GET /menu/ HTTP/1.1" 200 22854
+[2026-04-28 10:05:05,370] INFO django.server basehttp "GET /api/dashboard-data/?anio=2026&_=1777385104806 HTTP/1.1" 200 960
+[2026-04-28 10:05:07,411] INFO django.server basehttp "GET /emergencias/ HTTP/1.1" 200 16544
+[2026-04-28 10:06:47,867] INFO django.server basehttp "GET /emergencias/ HTTP/1.1" 200 16544
+[2026-04-28 10:07:23,326] INFO django.server basehttp "POST /reportes/importar-excel/ HTTP/1.1" 302 0
+[2026-04-28 10:07:24,158] INFO django.server basehttp "GET /emergencias/ HTTP/1.1" 200 16904
+[2026-04-28 10:07:50,658] INFO django.server basehttp "POST /reportes/importar-excel/ HTTP/1.1" 302 0
+[2026-04-28 10:07:51,415] INFO django.server basehttp "GET /emergencias/ HTTP/1.1" 200 16904
+[2026-04-28 10:09:20,720] INFO django.utils.autoreload autoreload C:\Users\Leonardo Revilla\Desktop\Morbilidades\apps\reportes\importador.py changed, reloading.
+[2026-04-28 10:09:59,536] INFO django.utils.autoreload autoreload Watching for file changes with StatReloader
+[2026-04-28 10:17:20,472] INFO django.server basehttp "GET /emergencias/ HTTP/1.1" 200 16544
+[2026-04-28 10:17:37,255] INFO django.server basehttp "POST /reportes/importar-excel/ HTTP/1.1" 302 0
+[2026-04-28 10:17:37,618] INFO django.server basehttp "GET /emergencias/ HTTP/1.1" 200 34088
+[2026-04-28 10:17:43,927] INFO django.server basehttp "GET /menu/ HTTP/1.1" 200 23830
+[2026-04-28 10:17:45,204] INFO django.server basehttp "GET /api/dashboard-data/?anio=2026&_=1777385864439 HTTP/1.1" 200 1056
+[2026-04-28 10:18:28,303] INFO django.server basehttp "GET /emergencias/especialistas/ HTTP/1.1" 200 18535
+[2026-04-28 10:18:41,566] INFO django.server basehttp "GET /usuarios/bitacora/ HTTP/1.1" 200 28216
+[2026-04-28 10:18:57,282] INFO django.server basehttp "GET /movimientos/ HTTP/1.1" 200 48469
+[2026-04-28 10:19:11,756] INFO django.server basehttp "GET /menu/ HTTP/1.1" 200 23830
+[2026-04-28 10:19:13,075] INFO django.server basehttp "GET /api/dashboard-data/?anio=2026&_=1777385952554 HTTP/1.1" 200 1056
+[2026-04-28 10:20:35,408] INFO django.server basehttp "GET /emergencias/ HTTP/1.1" 200 33845
+[2026-04-28 10:20:59,555] INFO django.server basehttp "GET /menu/ HTTP/1.1" 200 23830
+[2026-04-28 10:21:00,536] INFO django.server basehttp "GET /api/dashboard-data/?anio=2026&_=1777386060326 HTTP/1.1" 200 1056
+[2026-04-28 10:26:58,681] INFO django.utils.autoreload autoreload C:\Users\Leonardo Revilla\Desktop\Morbilidades\apps\reportes\views.py changed, reloading.
+[2026-04-28 10:27:08,304] INFO django.utils.autoreload autoreload Watching for file changes with StatReloader
+[2026-04-28 10:34:26,805] INFO django.server basehttp "GET /menu/ HTTP/1.1" 200 23830
+[2026-04-28 10:34:28,988] INFO django.server basehttp "GET /api/dashboard-data/?anio=2026&_=1777386868682 HTTP/1.1" 200 1056
+[2026-04-28 10:34:41,569] ERROR django.request log Internal Server Error: /movimientos/
+Traceback (most recent call last):
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\contrib\auth\decorators.py", line 23, in _wrapper_view
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\apps\reportes\views.py", line 1111, in movimientos_view
+    return render(request, 'reportes/movimientos.html', context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\shortcuts.py", line 24, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\backends\django.py", line 61, in render
+    return self.template.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\base.py", line 175, in render
+    return self._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\base.py", line 167, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\base.py", line 1005, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\base.py", line 1005, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\base.py", line 966, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\loader_tags.py", line 157, in render
+    return compiled_parent._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\base.py", line 167, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\base.py", line 1005, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\base.py", line 1005, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\base.py", line 966, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\loader_tags.py", line 63, in render
+    result = block.nodelist.render(context)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\base.py", line 1005, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\base.py", line 1005, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\base.py", line 966, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\defaulttags.py", line 194, in render
+    len_values = len(values)
+                 ^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\db\models\query.py", line 382, in __len__
+    self._fetch_all()
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\db\models\query.py", line 1886, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\db\models\query.py", line 210, in __iter__
+    for row in compiler.results_iter(
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\db\models\sql\compiler.py", line 1500, in apply_converters
+    value = converter(value, expression, connection)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\db\models\functions\datetime.py", line 348, in convert_value
+    raise ValueError(
+ValueError: Database returned an invalid datetime value. Are time zone definitions for your database installed?
+[2026-04-28 10:34:42,008] ERROR django.server basehttp "GET /movimientos/ HTTP/1.1" 500 204747
+[2026-04-28 10:34:43,962] WARNING django.request log Not Found: /favicon.ico
+[2026-04-28 10:34:43,979] WARNING django.server basehttp "GET /favicon.ico HTTP/1.1" 404 6335
+[2026-04-28 10:35:57,011] INFO django.utils.autoreload autoreload C:\Users\Leonardo Revilla\Desktop\Morbilidades\apps\reportes\views.py changed, reloading.
+[2026-04-28 10:36:04,976] INFO django.utils.autoreload autoreload Watching for file changes with StatReloader
+[2026-04-28 10:36:19,303] INFO django.utils.autoreload autoreload C:\Users\Leonardo Revilla\Desktop\Morbilidades\apps\reportes\views.py changed, reloading.
+[2026-04-28 10:36:25,608] INFO django.utils.autoreload autoreload Watching for file changes with StatReloader
+[2026-04-28 10:36:33,291] INFO django.utils.autoreload autoreload C:\Users\Leonardo Revilla\Desktop\Morbilidades\apps\reportes\views.py changed, reloading.
+[2026-04-28 10:36:37,525] INFO django.utils.autoreload autoreload Watching for file changes with StatReloader
+[2026-04-28 10:44:31,925] ERROR django.request log Internal Server Error: /movimientos/
+Traceback (most recent call last):
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\contrib\auth\decorators.py", line 23, in _wrapper_view
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\apps\reportes\views.py", line 1089, in movimientos_view
+    'fecha_ref': datetime.date(m['year'], m['month'], 1)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object cannot be interpreted as an integer
+[2026-04-28 10:44:31,949] ERROR django.server basehttp "GET /movimientos/ HTTP/1.1" 500 84956
+[2026-04-28 10:44:35,888] ERROR django.request log Internal Server Error: /movimientos/
+Traceback (most recent call last):
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\contrib\auth\decorators.py", line 23, in _wrapper_view
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\apps\reportes\views.py", line 1089, in movimientos_view
+    'fecha_ref': datetime.date(m['year'], m['month'], 1)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object cannot be interpreted as an integer
+[2026-04-28 10:44:36,258] ERROR django.server basehttp "GET /movimientos/ HTTP/1.1" 500 84956
+[2026-04-28 10:44:41,646] INFO django.server basehttp "GET /api/dashboard-data/?anio=2026&_=1777387481138 HTTP/1.1" 200 1056
+[2026-04-28 10:44:45,558] ERROR django.request log Internal Server Error: /movimientos/
+Traceback (most recent call last):
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\contrib\auth\decorators.py", line 23, in _wrapper_view
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\apps\reportes\views.py", line 1089, in movimientos_view
+    'fecha_ref': datetime.date(m['year'], m['month'], 1)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object cannot be interpreted as an integer
+[2026-04-28 10:44:45,573] ERROR django.server basehttp "GET /movimientos/ HTTP/1.1" 500 84819
+[2026-04-28 10:45:45,819] INFO django.utils.autoreload autoreload C:\Users\Leonardo Revilla\Desktop\Morbilidades\apps\reportes\views.py changed, reloading.
+[2026-04-28 10:46:00,978] INFO django.utils.autoreload autoreload Watching for file changes with StatReloader
+[2026-04-28 10:46:20,879] INFO django.server basehttp "GET /movimientos/ HTTP/1.1" 200 51000
+[2026-04-28 10:49:24,343] INFO django.utils.autoreload autoreload C:\Users\Leonardo Revilla\Desktop\Morbilidades\apps\reportes\models.py changed, reloading.
+[2026-04-28 10:49:33,171] INFO django.utils.autoreload autoreload Watching for file changes with StatReloader
+[2026-04-28 10:59:12,655] INFO django.utils.autoreload autoreload C:\Users\Leonardo Revilla\Desktop\Morbilidades\apps\reportes\views.py changed, reloading.
+[2026-04-28 10:59:24,715] INFO django.utils.autoreload autoreload Watching for file changes with StatReloader
+[2026-04-28 11:03:06,456] ERROR django.request log Internal Server Error: /movimientos/
+Traceback (most recent call last):
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\contrib\auth\decorators.py", line 23, in _wrapper_view
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\apps\reportes\views.py", line 1070, in movimientos_view
+    'archivados': archivados,
+                  ^^^^^^^^^^
+NameError: name 'archivados' is not defined
+[2026-04-28 11:03:06,576] ERROR django.server basehttp "GET /movimientos/ HTTP/1.1" 500 82329
+[2026-04-28 11:04:04,677] INFO django.utils.autoreload autoreload C:\Users\Leonardo Revilla\Desktop\Morbilidades\apps\reportes\views.py changed, reloading.
+[2026-04-28 11:04:22,813] INFO django.utils.autoreload autoreload Watching for file changes with StatReloader
+[2026-04-28 11:04:54,850] INFO django.server basehttp "GET /movimientos/ HTTP/1.1" 200 48729
+[2026-04-28 11:05:08,535] ERROR django.request log Internal Server Error: /biblioteca/
+Traceback (most recent call last):
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\contrib\auth\decorators.py", line 23, in _wrapper_view
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\apps\usuarios\decorators.py", line 21, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\apps\reportes\views.py", line 1146, in biblioteca_view
+    return render(request, 'reportes/biblioteca.html', context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\shortcuts.py", line 24, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\backends\django.py", line 61, in render
+    return self.template.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\base.py", line 175, in render
+    return self._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\base.py", line 167, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\base.py", line 1005, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\base.py", line 1005, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\base.py", line 966, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\loader_tags.py", line 157, in render
+    return compiled_parent._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\base.py", line 167, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\base.py", line 1005, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\base.py", line 1005, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\base.py", line 966, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\loader_tags.py", line 63, in render
+    result = block.nodelist.render(context)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\base.py", line 1005, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\base.py", line 1005, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\base.py", line 966, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\defaulttags.py", line 320, in render
+    if match:
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\db\models\query.py", line 414, in __bool__
+    self._fetch_all()
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\db\models\query.py", line 1886, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\db\models\query.py", line 210, in __iter__
+    for row in compiler.results_iter(
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\db\models\sql\compiler.py", line 1500, in apply_converters
+    value = converter(value, expression, connection)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\db\models\functions\datetime.py", line 348, in convert_value
+    raise ValueError(
+ValueError: Database returned an invalid datetime value. Are time zone definitions for your database installed?
+[2026-04-28 11:05:08,683] ERROR django.server basehttp "GET /biblioteca/ HTTP/1.1" 500 201445
+[2026-04-28 11:06:11,790] INFO django.utils.autoreload autoreload C:\Users\Leonardo Revilla\Desktop\Morbilidades\apps\reportes\views.py changed, reloading.
+[2026-04-28 11:06:20,640] INFO django.utils.autoreload autoreload Watching for file changes with StatReloader
+[2026-04-28 11:06:48,694] INFO django.server basehttp "GET /biblioteca/ HTTP/1.1" 200 19813
+[2026-04-28 11:07:26,364] INFO django.server basehttp "GET /movimientos/ HTTP/1.1" 200 48729
+[2026-04-28 11:07:40,288] INFO django.server basehttp "GET /menu/ HTTP/1.1" 200 24037
+[2026-04-28 11:07:41,595] INFO django.server basehttp "GET /api/dashboard-data/?anio=2026&_=1777388861050 HTTP/1.1" 200 1056
+[2026-04-28 11:07:55,133] INFO django.server basehttp "GET /biblioteca/ HTTP/1.1" 200 19813
+[2026-04-28 11:12:32,675] INFO django.server basehttp "GET /emergencias/ HTTP/1.1" 200 34052
+[2026-04-28 11:13:55,650] INFO django.server basehttp "GET /emergencias/?page=31&q= HTTP/1.1" 200 29089
+[2026-04-28 11:15:05,389] INFO django.server basehttp "POST /emergencias/limpiar/ HTTP/1.1" 302 0
+[2026-04-28 11:15:05,390] INFO django.server basehttp - Broken pipe from ('127.0.0.1', 51759)
+[2026-04-28 11:15:05,489] INFO django.server basehttp "GET /emergencias/ HTTP/1.1" 200 16350
+[2026-04-28 11:15:18,974] INFO django.server basehttp "GET /biblioteca/ HTTP/1.1" 200 514521
+[2026-04-28 11:15:37,774] INFO django.server basehttp "GET /movimientos/ HTTP/1.1" 200 118631
+[2026-04-28 11:15:58,994] INFO django.server basehttp "POST /movimientos/restaurar/ HTTP/1.1" 302 0
+[2026-04-28 11:15:59,790] INFO django.server basehttp "GET /movimientos/ HTTP/1.1" 200 120211
+[2026-04-28 11:16:06,645] INFO django.server basehttp "POST /movimientos/restaurar/ HTTP/1.1" 302 0
+[2026-04-28 11:16:07,536] INFO django.server basehttp "GET /movimientos/ HTTP/1.1" 200 121560
+[2026-04-28 11:16:13,171] INFO django.server basehttp "POST /movimientos/restaurar/ HTTP/1.1" 302 0
+[2026-04-28 11:16:13,973] INFO django.server basehttp "GET /movimientos/ HTTP/1.1" 200 122913
+[2026-04-28 11:16:19,727] INFO django.server basehttp "POST /movimientos/restaurar/ HTTP/1.1" 302 0
+[2026-04-28 11:16:20,479] INFO django.server basehttp "GET /movimientos/ HTTP/1.1" 200 124266
+[2026-04-28 11:16:26,425] INFO django.server basehttp "POST /movimientos/restaurar/ HTTP/1.1" 302 0
+[2026-04-28 11:16:27,215] INFO django.server basehttp "GET /movimientos/ HTTP/1.1" 200 125615
+[2026-04-28 11:19:04,558] INFO django.utils.autoreload autoreload C:\Users\Leonardo Revilla\Desktop\Morbilidades\apps\reportes\views.py changed, reloading.
+[2026-04-28 11:19:14,033] INFO django.utils.autoreload autoreload Watching for file changes with StatReloader
+[2026-04-28 11:19:24,159] INFO django.utils.autoreload autoreload C:\Users\Leonardo Revilla\Desktop\Morbilidades\apps\reportes\urls.py changed, reloading.
+[2026-04-28 11:19:29,953] INFO django.utils.autoreload autoreload Watching for file changes with StatReloader
+[2026-04-28 11:47:59,190] INFO django.server basehttp "GET /movimientos/ HTTP/1.1" 200 126381
+[2026-04-28 11:50:05,739] INFO django.server basehttp "GET /movimientos/ HTTP/1.1" 200 126582
+[2026-04-28 11:50:45,879] INFO django.server basehttp "POST /movimientos/restaurar-masivo/ HTTP/1.1" 302 0
+[2026-04-28 11:50:46,854] INFO django.server basehttp "GET /movimientos/ HTTP/1.1" 200 140211
+[2026-04-28 11:50:54,132] INFO django.server basehttp "GET /emergencias/ HTTP/1.1" 200 32492
+[2026-04-28 11:57:57,246] INFO django.server basehttp "GET /biblioteca/ HTTP/1.1" 200 214452
+[2026-04-28 12:03:05,303] INFO django.server basehttp "GET /emergencias/ HTTP/1.1" 200 32492
+[2026-04-28 12:06:09,404] INFO django.utils.autoreload autoreload C:\Users\Leonardo Revilla\Desktop\Morbilidades\apps\reportes\importador.py changed, reloading.
+[2026-04-28 12:06:27,194] INFO django.utils.autoreload autoreload Watching for file changes with StatReloader
+[2026-04-28 12:06:54,133] INFO django.utils.autoreload autoreload C:\Users\Leonardo Revilla\Desktop\Morbilidades\apps\reportes\importador.py changed, reloading.
+[2026-04-28 12:07:05,286] INFO django.utils.autoreload autoreload Watching for file changes with StatReloader
+[2026-04-28 12:19:10,667] INFO django.server basehttp "GET /emergencias/ HTTP/1.1" 200 32492
+[2026-04-28 12:19:51,638] INFO django.server basehttp "GET /emergencias/ HTTP/1.1" 200 32492
+[2026-04-28 12:22:18,400] INFO django.utils.autoreload autoreload C:\Users\Leonardo Revilla\Desktop\Morbilidades\apps\reportes\views.py changed, reloading.
+[2026-04-28 12:22:26,297] INFO django.utils.autoreload autoreload Watching for file changes with StatReloader
+[2026-04-28 12:33:09,504] INFO django.server basehttp "GET /emergencias/ HTTP/1.1" 200 32492
+[2026-04-28 12:33:22,645] ERROR django.request log Internal Server Error: /biblioteca/
+Traceback (most recent call last):
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\contrib\auth\decorators.py", line 23, in _wrapper_view
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\apps\usuarios\decorators.py", line 21, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\apps\reportes\views.py", line 1167, in biblioteca_view
+    return render(request, 'reportes/biblioteca.html', context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\shortcuts.py", line 24, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\backends\django.py", line 61, in render
+    return self.template.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\base.py", line 175, in render
+    return self._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\base.py", line 167, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\base.py", line 1005, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\base.py", line 1005, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\base.py", line 966, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\loader_tags.py", line 157, in render
+    return compiled_parent._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\base.py", line 167, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\base.py", line 1005, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\base.py", line 1005, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\base.py", line 966, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\loader_tags.py", line 63, in render
+    result = block.nodelist.render(context)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\base.py", line 1005, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\base.py", line 1005, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\base.py", line 966, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\template\defaulttags.py", line 471, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\urls\base.py", line 88, in reverse
+    return resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\urls\resolvers.py", line 828, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'auto_organizar_biblioteca' not found. 'auto_organizar_biblioteca' is not a valid view function or pattern name.
+[2026-04-28 12:33:23,858] ERROR django.server basehttp "GET /biblioteca/ HTTP/1.1" 500 228464
+[2026-04-28 12:35:45,748] INFO django.utils.autoreload autoreload C:\Users\Leonardo Revilla\Desktop\Morbilidades\apps\reportes\urls.py changed, reloading.
+[2026-04-28 12:35:55,036] INFO django.utils.autoreload autoreload Watching for file changes with StatReloader
+[2026-04-28 12:38:57,452] INFO django.utils.autoreload autoreload C:\Users\Leonardo Revilla\Desktop\Morbilidades\apps\reportes\urls.py changed, reloading.
+[2026-04-28 12:39:04,559] INFO django.utils.autoreload autoreload Watching for file changes with StatReloader
+[2026-04-28 12:40:49,983] INFO django.server basehttp "GET /biblioteca/ HTTP/1.1" 200 215022
+[2026-04-28 12:41:15,550] INFO django.server basehttp "POST /biblioteca/auto-organizar-todo/ HTTP/1.1" 302 0
+[2026-04-28 12:41:17,176] INFO django.server basehttp "GET /biblioteca/ HTTP/1.1" 200 220279
+[2026-04-28 12:41:31,773] INFO django.server basehttp "GET /biblioteca/?mes=&anio=&q= HTTP/1.1" 200 219994
+[2026-04-28 12:41:48,053] INFO django.server basehttp "GET /emergencias/ HTTP/1.1" 200 30191
+[2026-04-28 12:41:50,239] INFO django.server basehttp "GET /emergencias/especialistas/ HTTP/1.1" 200 16201
+[2026-04-28 12:41:52,623] INFO django.server basehttp "GET /emergencias/no-asistidos/ HTTP/1.1" 200 15964
+[2026-04-28 12:41:54,555] INFO django.server basehttp "GET /ecosonogramas/ HTTP/1.1" 200 16024
+[2026-04-28 12:41:56,836] INFO django.server basehttp "GET /emergencias/ HTTP/1.1" 200 30191
+[2026-04-28 12:42:17,732] INFO django.server basehttp "GET /emergencias/?page=2&q= HTTP/1.1" 200 28361
+[2026-04-28 12:42:29,788] INFO django.server basehttp "GET /menu/ HTTP/1.1" 200 24034
+[2026-04-28 12:42:31,187] INFO django.server basehttp "GET /api/dashboard-data/?anio=2026&_=1777394550131 HTTP/1.1" 200 975
+[2026-04-28 12:42:49,480] INFO django.server basehttp "GET /movimientos/ HTTP/1.1" 200 139944
+[2026-04-28 12:43:13,813] INFO django.server basehttp "GET /emergencias/ HTTP/1.1" 200 30191
+[2026-04-28 12:43:27,348] INFO django.server basehttp "GET /usuarios/lista/ HTTP/1.1" 200 15962
+[2026-04-28 12:43:40,488] INFO django.server basehttp "GET /biblioteca/ HTTP/1.1" 200 219994
+[2026-04-28 12:44:25,461] INFO django.utils.autoreload autoreload C:\Users\Leonardo Revilla\Desktop\Morbilidades\apps\reportes\importador.py changed, reloading.
+[2026-04-28 12:44:39,938] INFO django.utils.autoreload autoreload Watching for file changes with StatReloader
+[2026-04-28 12:44:51,390] INFO django.utils.autoreload autoreload C:\Users\Leonardo Revilla\Desktop\Morbilidades\apps\reportes\views.py changed, reloading.
+[2026-04-28 12:45:00,990] INFO django.utils.autoreload autoreload Watching for file changes with StatReloader
+[2026-04-28 12:46:11,646] INFO django.server basehttp "GET /biblioteca/ HTTP/1.1" 200 219994
+[2026-04-28 12:46:21,287] INFO django.server basehttp "POST /biblioteca/auto-organizar-todo/ HTTP/1.1" 302 0
+[2026-04-28 12:46:21,991] INFO django.server basehttp "GET /biblioteca/ HTTP/1.1" 200 220248
+[2026-04-28 12:46:47,292] INFO django.server basehttp "GET /menu/ HTTP/1.1" 200 24034
+[2026-04-28 12:46:48,885] INFO django.server basehttp "GET /api/dashboard-data/?anio=2026&_=1777394808496 HTTP/1.1" 200 975
+[2026-04-28 12:46:52,401] INFO django.server basehttp "GET /usuarios/logout/ HTTP/1.1" 302 0
+[2026-04-28 12:46:53,299] INFO django.server basehttp "GET /usuarios/login/ HTTP/1.1" 200 4531
+[2026-04-28 12:47:02,634] INFO django.server basehttp "GET /usuarios/login/ HTTP/1.1" 200 4275
+[2026-04-28 14:05:02,887] INFO django.server basehttp "POST /usuarios/login/ HTTP/1.1" 302 0
+[2026-04-28 14:05:04,147] INFO django.server basehttp "GET /menu/ HTTP/1.1" 200 24255
+[2026-04-28 14:05:06,763] INFO django.server basehttp "GET /static/css/style.css?v=1.3 HTTP/1.1" 304 0
+[2026-04-28 14:05:06,794] INFO django.server basehttp "GET /static/js/main.js?v=1.5 HTTP/1.1" 304 0
+[2026-04-28 14:05:08,831] INFO django.server basehttp "GET /api/dashboard-data/?anio=2026&_=1777399507632 HTTP/1.1" 200 975
+[2026-04-28 14:05:24,071] INFO django.server basehttp "GET /biblioteca/ HTTP/1.1" 200 219994
+[2026-04-28 14:05:32,830] INFO django.server basehttp "POST /biblioteca/auto-organizar-todo/ HTTP/1.1" 302 0
+[2026-04-28 14:05:33,754] INFO django.server basehttp "GET /biblioteca/ HTTP/1.1" 200 220248
+[2026-04-28 14:05:46,688] INFO django.server basehttp "POST /biblioteca/auto-organizar-todo/ HTTP/1.1" 302 0
+[2026-04-28 14:05:48,174] INFO django.server basehttp "GET /biblioteca/ HTTP/1.1" 200 220248
+[2026-04-28 14:07:54,504] INFO django.utils.autoreload autoreload C:\Users\Leonardo Revilla\Desktop\Morbilidades\apps\reportes\views.py changed, reloading.
+[2026-04-28 14:08:10,007] INFO django.utils.autoreload autoreload Watching for file changes with StatReloader
+[2026-04-28 14:08:52,431] INFO django.server basehttp "GET /biblioteca/ HTTP/1.1" 200 219994
+[2026-04-28 14:09:03,359] ERROR django.request log Internal Server Error: /biblioteca/auto-organizar-todo/
+Traceback (most recent call last):
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\.venv\Lib\site-packages\django\contrib\auth\decorators.py", line 23, in _wrapper_view
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\apps\usuarios\decorators.py", line 21, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\apps\reportes\views.py", line 1310, in auto_organizar_biblioteca_view
+    c1 = reindexar_tipo(MorbilidadEmergencia, 'fecha_diagnostico')
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Leonardo Revilla\Desktop\Morbilidades\apps\reportes\views.py", line 1294, in reindexar_tipo
+    if obj.activo and fecha_real < inicio_mes:
+                      ^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: can't compare datetime.datetime to datetime.date
+[2026-04-28 14:09:04,039] ERROR django.server basehttp "POST /biblioteca/auto-organizar-todo/ HTTP/1.1" 500 91854
+[2026-04-28 14:10:06,976] INFO django.utils.autoreload autoreload C:\Users\Leonardo Revilla\Desktop\Morbilidades\apps\reportes\views.py changed, reloading.
+[2026-04-28 14:10:18,742] INFO django.utils.autoreload autoreload Watching for file changes with StatReloader
+[2026-04-28 14:12:44,505] INFO django.server basehttp "GET /biblioteca/ HTTP/1.1" 200 219994
+[2026-04-28 14:13:18,464] INFO django.server basehttp - Broken pipe from ('127.0.0.1', 54005)
+[2026-04-28 14:13:21,963] INFO django.server basehttp "POST /biblioteca/auto-organizar-todo/ HTTP/1.1" 302 0
+[2026-04-28 14:13:23,678] INFO django.server basehttp "GET /biblioteca/ HTTP/1.1" 200 495852
+[2026-04-28 14:14:08,488] INFO django.server basehttp "POST /biblioteca/auto-organizar-todo/ HTTP/1.1" 302 0
+[2026-04-28 14:14:09,760] INFO django.server basehttp "GET /biblioteca/ HTTP/1.1" 200 495827
+[2026-04-28 14:16:43,351] INFO django.utils.autoreload autoreload C:\Users\Leonardo Revilla\Desktop\Morbilidades\apps\reportes\views.py changed, reloading.
+[2026-04-28 14:16:54,926] INFO django.utils.autoreload autoreload Watching for file changes with StatReloader
+[2026-04-28 14:19:33,136] INFO django.server basehttp "GET /biblioteca/ HTTP/1.1" 200 495589
+[2026-04-28 14:19:46,556] INFO django.server basehttp "POST /biblioteca/auto-organizar-todo/ HTTP/1.1" 302 0
+[2026-04-28 14:19:47,696] INFO django.server basehttp "GET /biblioteca/ HTTP/1.1" 200 495847
+[2026-04-28 14:24:05,119] INFO django.server basehttp "GET /biblioteca/ HTTP/1.1" 200 498360
+[2026-04-28 14:24:24,130] INFO django.server basehttp "GET /biblioteca/ HTTP/1.1" 200 498360
+[2026-04-28 14:24:44,694] INFO django.server basehttp "POST /biblioteca/auto-organizar-todo/ HTTP/1.1" 302 0
+[2026-04-28 14:24:45,819] INFO django.server basehttp "GET /biblioteca/ HTTP/1.1" 200 498618
+[2026-04-28 14:37:13,715] INFO django.server basehttp "GET /biblioteca/ HTTP/1.1" 200 19124
+[2026-04-28 14:37:51,401] INFO django.server basehttp "GET /movimientos/ HTTP/1.1" 200 139918
+[2026-04-28 14:38:07,918] INFO django.server basehttp "GET /biblioteca/ HTTP/1.1" 200 19124
+[2026-04-28 14:41:54,201] INFO django.server basehttp "POST /biblioteca/auto-organizar-todo/ HTTP/1.1" 302 0
+[2026-04-28 14:41:54,633] INFO django.server basehttp "GET /biblioteca/ HTTP/1.1" 200 19382
+[2026-04-28 14:56:44,514] INFO django.server basehttp "GET /biblioteca/ HTTP/1.1" 200 19436
+[2026-04-28 14:57:32,655] INFO django.server basehttp "GET /biblioteca/ HTTP/1.1" 200 19436
+[2026-04-28 14:57:54,037] INFO django.server basehttp "POST /biblioteca/auto-organizar-todo/ HTTP/1.1" 302 0
+[2026-04-28 14:57:54,503] INFO django.server basehttp "GET /biblioteca/ HTTP/1.1" 200 19694
+[2026-04-28 14:59:02,784] INFO django.utils.autoreload autoreload C:\Users\Leonardo Revilla\Desktop\Morbilidades\apps\reportes\views.py changed, reloading.
+[2026-04-28 14:59:19,579] INFO django.utils.autoreload autoreload Watching for file changes with StatReloader
+[2026-04-28 15:01:42,382] INFO django.server basehttp "GET /biblioteca/ HTTP/1.1" 200 28631
+[2026-04-28 15:01:49,465] INFO django.server basehttp "GET /biblioteca/?mes=4&anio=2026 HTTP/1.1" 200 30408
+[2026-04-28 15:02:04,388] INFO django.server basehttp "GET /biblioteca/?mes=11&anio=2025 HTTP/1.1" 200 30412
+[2026-04-28 15:03:48,642] INFO django.server basehttp "GET /movimientos/ HTTP/1.1" 200 139918
+[2026-04-28 15:04:06,192] INFO django.server basehttp "GET /menu/ HTTP/1.1" 200 24034
+[2026-04-28 15:04:07,838] INFO django.server basehttp "GET /api/dashboard-data/?anio=2026&_=1777403047665 HTTP/1.1" 200 975
+[2026-04-28 15:04:16,768] INFO django.server basehttp "GET /biblioteca/ HTTP/1.1" 200 28631
+[2026-04-28 15:06:21,869] INFO django.server basehttp "GET /biblioteca/?mes=11&anio=2025 HTTP/1.1" 200 30412
+[2026-04-28 15:06:31,236] INFO django.server basehttp "GET /biblioteca/ HTTP/1.1" 200 28631
+[2026-04-28 15:06:36,091] INFO django.server basehttp "GET /biblioteca/?mes=4&anio=2025 HTTP/1.1" 200 30408
+[2026-04-28 15:06:41,763] INFO django.server basehttp "GET /biblioteca/?mes=3&anio=2026 HTTP/1.1" 200 30408
+[2026-04-28 15:06:44,750] INFO django.server basehttp "GET /biblioteca/ HTTP/1.1" 200 28631
+[2026-04-28 15:06:52,579] INFO django.server basehttp "POST /biblioteca/auto-organizar-todo/ HTTP/1.1" 302 0
+[2026-04-28 15:06:53,091] INFO django.server basehttp "GET /biblioteca/ HTTP/1.1" 200 28889

@@ -29,4 +29,10 @@ urlpatterns = [
     path('monitor/', views.monitor_view, name='monitor'),
     path('movimientos/restaurar/', views.restaurar_registro_view, name='restaurar_registro'),
     path('movimientos/limpiar-actividad/', views.limpiar_actividad_global_view, name='limpiar_actividad_global'),
+    path('movimientos/restaurar-masivo/', views.restaurar_masivo_view, name='restaurar_masivo'),
+
+    # Biblioteca Histórica (Admin)
+    path('biblioteca/', views.biblioteca_view, name='biblioteca'),
+    path('biblioteca/cerrar-mes/', views.cerrar_mes_view, name='cerrar_mes'),
+    path('biblioteca/auto-organizar-todo/', views.auto_organizar_biblioteca_view, name='auto_organizar_biblioteca'),
 ]

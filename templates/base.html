@@ -100,6 +100,9 @@
 
             {% if user.rol == 'ADMIN' %}
             <div class="nav-section"><span class="section-text">Administración</span></div>
+            <a href="{% url 'biblioteca' %}" class="nav-link">
+                <i class="bi bi-collection-fill" style="color: var(--primary);"></i> <span class="nav-text">Biblioteca Histórica</span>
+            </a>
             <a href="{% url 'crud_especialidades' %}" class="nav-link">
                 <i class="bi bi-bookmark-star-fill"></i> <span class="nav-text">Especialidades</span>
             </a>

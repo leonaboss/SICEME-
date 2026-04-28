@@ -119,15 +119,29 @@
 </div>
 
 <!-- Registros Archivados -->
-<div class="table-card">
+<div class="table-card" id="seccion-archivos">
     <div class="table-card-header d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
-        <div class="d-flex align-items-center">
-            <h3 class="mb-0"><i class="bi bi-archive-fill" style="color:var(--danger)"></i> Registros Archivados
+        <div class="d-flex align-items-center flex-grow-1">
+            <h3 class="mb-0 me-3"><i class="bi bi-archive-fill" style="color:var(--danger)"></i> 
+                Registros Archivados Recientemente
                 <span class="badge bg-danger">{{ total_archivados }}</span>
             </h3>
+            
+            <!-- Restauración Masiva por Cantidad (DISEÑO MEJORADO) -->
+            <form method="post" action="{% url 'restaurar_masivo' %}" class="d-flex gap-1 align-items-center ms-2" onsubmit="return confirm('¿Está seguro de que desea restaurar esta cantidad de registros?');">
+                {% csrf_token %}
+                <div class="input-group" style="width: 240px;">
+                    <span class="input-group-text bg-white text-primary fw-bold" style="font-size: 0.85rem; border-color: #cbd5e1;">Restaurar:</span>
+                    <input type="number" name="cantidad" class="form-control fw-bold text-center" placeholder="0" min="1" max="{{ total_archivados }}" required 
+                        style="font-size: 1.1rem; color: var(--primary); border-color: #cbd5e1; background-color: #f8fafc;">
+                    <button type="submit" class="btn btn-primary px-3" title="Restaurar esta cantidad">
+                        <i class="bi bi-arrow-counterclockwise" style="font-size: 1.1rem;"></i>
+                    </button>
+                </div>
+            </form>
         </div>
         
-        <div class="d-flex gap-2 flex-grow-1 justify-content-md-end">
+        <div class="d-flex gap-2 justify-content-md-end">
             <!-- Buscador de Archivados -->
             <form method="get" action="{% url 'movimientos' %}" class="d-flex gap-1" style="max-width: 300px;">
                 <div class="input-group input-group-sm">
