@@ -7832,3 +7832,16 @@ TypeError: can't compare datetime.datetime to datetime.date
 [2026-04-28 15:06:44,750] INFO django.server basehttp "GET /biblioteca/ HTTP/1.1" 200 28631
 [2026-04-28 15:06:52,579] INFO django.server basehttp "POST /biblioteca/auto-organizar-todo/ HTTP/1.1" 302 0
 [2026-04-28 15:06:53,091] INFO django.server basehttp "GET /biblioteca/ HTTP/1.1" 200 28889
+[2026-05-02 13:13:13,894] INFO django.utils.autoreload autoreload Watching for file changes with StatReloader
+[2026-05-02 13:17:16,935] INFO django.server basehttp "GET / HTTP/1.1" 302 0
+[2026-05-02 13:17:17,295] INFO django.server basehttp "GET /usuarios/login/?next=/ HTTP/1.1" 200 4275
+[2026-05-02 13:17:17,557] INFO django.server basehttp "GET /static/css/style.css HTTP/1.1" 200 25484
+[2026-05-02 13:17:17,805] INFO django.server basehttp "GET /static/img/logo_unefm.png HTTP/1.1" 200 70501
+[2026-05-02 13:17:18,191] INFO django.server basehttp "GET /static/img/favicon.png?v=2 HTTP/1.1" 200 445410
+[2026-05-02 13:17:24,920] INFO django.server basehttp "GET /usuarios/crear-cuenta/ HTTP/1.1" 200 7024
+[2026-05-02 13:17:29,128] INFO django.server basehttp "GET /usuarios/login/ HTTP/1.1" 200 4275
+[2026-05-02 13:50:47,914] INFO django.server basehttp "GET /usuarios/password-reset/ HTTP/1.1" 200 2557
+[2026-05-02 13:50:51,291] INFO django.server basehttp "GET /usuarios/login/ HTTP/1.1" 200 4275
+[2026-05-02 18:41:28,867] INFO django.server basehttp "GET /usuarios/crear-cuenta/ HTTP/1.1" 200 7024
+[2026-05-02 18:41:29,341] INFO django.server basehttp "GET /static/css/style.css HTTP/1.1" 304 0
+[2026-05-02 18:41:29,343] INFO django.server basehttp "GET /static/img/logo_unefm.png HTTP/1.1" 304 0
