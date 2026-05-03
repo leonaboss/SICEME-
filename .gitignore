@@ -29,7 +29,7 @@ static_root/
 staticfiles/
 
 # Entorno y Secretos
-# .env  ← Incluido en repo para despliegue automático (repo PRIVADO)
+.env
 .venv
 env/
 venv/
