@@ -34,7 +34,9 @@ def clear_movimiento(instance):
 # --- Señal: Emergencias ---
 @receiver(post_save, sender=MorbilidadEmergencia)
 def emergencia_post_save(sender, instance, **kwargs):
-    sync_movimiento(instance, 'emergencia', instance.nombre_apellido, instance.medico)
+    # Ahora incluimos el diagnóstico en el detalle para que sea visible en la biblioteca
+    detalle = f"Diag: {instance.diagnostico or 'Sin diagnóstico'} | Med: {instance.medico}"
+    sync_movimiento(instance, 'emergencia', instance.nombre_apellido, detalle)
 
 @receiver(post_delete, sender=MorbilidadEmergencia)
 def emergencia_post_delete(sender, instance, **kwargs):
@@ -43,7 +45,7 @@ def emergencia_post_delete(sender, instance, **kwargs):
 # --- Señal: Especialistas ---
 @receiver(post_save, sender=MorbilidadEspecialista)
 def especialista_post_save(sender, instance, **kwargs):
-    detalle = f"{instance.especialista} - {instance.especialidad}"
+    detalle = f"Diag: {instance.diagnostico or 'Sin diagnóstico'} | {instance.especialista} - {instance.especialidad}"
     sync_movimiento(instance, 'especialista', instance.nombre_apellido, detalle)
 
 @receiver(post_delete, sender=MorbilidadEspecialista)
@@ -63,7 +65,7 @@ def no_asistido_post_delete(sender, instance, **kwargs):
 # --- Señal: Ecosonogramas ---
 @receiver(post_save, sender=MorbilidadEcosonograma)
 def ecosonograma_post_save(sender, instance, **kwargs):
-    detalle = f"{instance.tipo_eco} - {instance.medico}"
+    detalle = f"Diag: {instance.diagnostico or 'Sin diagnóstico'} | {instance.tipo_eco} - {instance.medico}"
     sync_movimiento(instance, 'ecosonograma', instance.nombre_apellido, detalle)
 
 @receiver(post_delete, sender=MorbilidadEcosonograma)

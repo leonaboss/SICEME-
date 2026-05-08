@@ -10,7 +10,7 @@ class MorbilidadEmergenciaForm(forms.ModelForm):
         fields = [
             'cedula', 'nombre_apellido', 'edad', 'sexo',
             'dependencia', 'telefono', 'codigo',
-            'medico', 'fecha_diagnostico'
+            'medico', 'diagnostico', 'fecha_diagnostico'
         ]
         widgets = {
             'cedula': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'V-12345678'}),
@@ -21,6 +21,7 @@ class MorbilidadEmergenciaForm(forms.ModelForm):
             'telefono': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '+58 4XX-XXXXXXX'}),
             'codigo': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Código'}),
             'medico': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre del Médico'}),
+            'diagnostico': forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': 'Diagnóstico del paciente'}),
             'fecha_diagnostico': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
         }
 

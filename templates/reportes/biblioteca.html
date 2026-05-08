@@ -204,6 +204,7 @@
                 <tr>
                     <th>Tipo</th>
                     <th>Paciente</th>
+                    <th>Morbilidad / Detalle</th>
                     <th>Fecha Registro</th>
                     <th>Acciones</th>
                 </tr>
@@ -217,15 +218,37 @@
                         </span>
                     </td>
                     <td><strong>{{ reg.nombre_display }}</strong></td>
+                    <td><small class="text-muted">{{ reg.detalle|default:"---" }}</small></td>
                     <td>{{ reg.created_at|date:"d/m/Y H:i" }}</td>
                     <td>
-                        <form method="post" action="{% url 'restaurar_registro' %}" class="d-inline">
-                            {% csrf_token %}
-                            <input type="hidden" name="pk" value="{{ reg.pk }}">
-                            <button type="submit" class="btn-info-sm" title="Restaurar">
-                                <i class="bi bi-arrow-counterclockwise"></i> Restaurar
-                            </button>
-                        </form>
+                        <div class="d-flex gap-1">
+                            <!-- Abrir Expediente -->
+                            {% if reg.tipo_mov == 'emergencia' %}
+                                <a href="{% url 'editar_emergencia' reg.object_id %}" class="btn-siceme-sm" title="Abrir Expediente">
+                                    <i class="bi bi-folder2-open"></i> Abrir
+                                </a>
+                            {% elif reg.tipo_mov == 'especialista' %}
+                                <a href="{% url 'editar_morbilidad_especialista' reg.object_id %}" class="btn-siceme-sm" title="Abrir Expediente">
+                                    <i class="bi bi-folder2-open"></i> Abrir
+                                </a>
+                            {% elif reg.tipo_mov == 'ecosonograma' %}
+                                <a href="{% url 'editar_ecosonograma' reg.object_id %}" class="btn-siceme-sm" title="Abrir Expediente">
+                                    <i class="bi bi-folder2-open"></i> Abrir
+                                </a>
+                            {% elif reg.tipo_mov == 'no_asistido' %}
+                                <a href="{% url 'editar_no_asistido' reg.object_id %}" class="btn-siceme-sm" title="Abrir Expediente">
+                                    <i class="bi bi-folder2-open"></i> Abrir
+                                </a>
+                            {% endif %}
+
+                            <form method="post" action="{% url 'restaurar_registro' %}" class="d-inline">
+                                {% csrf_token %}
+                                <input type="hidden" name="pk" value="{{ reg.pk }}">
+                                <button type="submit" class="btn-info-sm" title="Restaurar">
+                                    <i class="bi bi-arrow-counterclockwise"></i>
+                                </button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
                 {% empty %}

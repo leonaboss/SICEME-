@@ -11,9 +11,9 @@
 <form method="post" class="login-form" autocomplete="off">
     {% csrf_token %}
     {% for field in form %}
-    <div class="mb-3">
+    <div class="mb-3" id="div-{{ field.name }}">
         <label for="{{ field.id_for_label }}" class="form-label fw-semibold small">{{ field.label }}</label>
-        {% if field.name == 'password1' or field.name == 'password2' %}
+        {% if field.name == 'password1' or field.name == 'password2' or field.name == 'admin_code' %}
         <div class="position-relative">
             {{ field }}
             <button type="button" id="toggle-{{ field.name }}" class="btn btn-link position-absolute end-0 top-50 translate-middle-y text-decoration-none" style="z-index:5; color: var(--text-muted); font-size: 1.1rem; padding-right: 12px; border: none; background: none;">
@@ -64,6 +64,23 @@
     document.addEventListener('DOMContentLoaded', function() {
         setupToggle('password1', 'registro-password1');
         setupToggle('password2', 'registro-password2');
+        setupToggle('admin_code', 'registro-admin-code');
+
+        // Lógica para mostrar/ocultar código de admin
+        const rolSelect = document.getElementById('registro-rol');
+        const adminDiv = document.getElementById('div-admin_code');
+        
+        if (rolSelect && adminDiv) {
+            function toggleAdminField() {
+                if (rolSelect.value === 'ADMIN') {
+                    adminDiv.style.display = 'block';
+                } else {
+                    adminDiv.style.display = 'none';
+                }
+            }
+            rolSelect.addEventListener('change', toggleAdminField);
+            toggleAdminField(); // Ejecutar al inicio
+        }
     });
 </script>
 {% endblock %}

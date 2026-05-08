@@ -14,6 +14,10 @@ from django.db import models
 from django.utils import timezone
 import openpyxl
 from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
+import logging
+import traceback
+
+logger = logging.getLogger(__name__)
 
 from apps.usuarios.decorators import rol_requerido
 from apps.usuarios.models import Usuario, BitacoraAuditoria
@@ -30,7 +34,7 @@ from .models import Movimiento
 def dashboard_view(request):
     """Dashboard principal con estadísticas generales"""
     try:
-        hoy = timezone.now()
+        hoy = timezone.localtime(timezone.now())
         mes_actual = hoy.month
         anio_actual = hoy.year
 
@@ -824,206 +828,6 @@ def importar_excel_view(request):
     return redirect('dashboard')
 
 
-# ═════════════════════════════════════════════
-# MOVIMIENTOS - Panel de Actividad + Archivados
-# ═════════════════════════════════════════════
-@login_required
-def movimientos_view(request):
-    """Panel de movimientos: timeline de actividad + registros archivados"""
-    import datetime as dt
-    hoy = timezone.now()
-    inicio_mes = dt.date(hoy.year, hoy.month, 1)
-    if hoy.month == 12:
-        fin_mes = dt.date(hoy.year + 1, 1, 1)
-    else:
-        fin_mes = dt.date(hoy.year, hoy.month + 1, 1)
-
-    # Filtrar por usuario si no es admin (Global por defecto para Admin)
-    filtro_usuario = {} if request.user.rol == 'ADMIN' else {'usuario': request.user}
-
-    # ── Tarjetas de resumen (mes actual) ──
-    emergencias_mes = MorbilidadEmergencia.objects.filter(
-        activo=True, created_at__gte=inicio_mes, created_at__lt=fin_mes, **filtro_usuario
-    ).count()
-    especialistas_mes = MorbilidadEspecialista.objects.filter(
-        activo=True, created_at__gte=inicio_mes, created_at__lt=fin_mes, **filtro_usuario
-    ).count()
-    ecosonogramas_mes = MorbilidadEcosonograma.objects.filter(
-        activo=True, created_at__gte=inicio_mes, created_at__lt=fin_mes, **filtro_usuario
-    ).count()
-    pacientes_atendidos = emergencias_mes + especialistas_mes + ecosonogramas_mes
-
-    no_asistidos_mes = PacienteNoAsistido.objects.filter(
-        activo=True, created_at__gte=inicio_mes, created_at__lt=fin_mes, **filtro_usuario
-    ).count()
-
-    # Archivados totales
-    arch_emergencias = list(MorbilidadEmergencia.objects.filter(activo=False, **filtro_usuario).order_by('-created_at'))
-    arch_especialistas = list(MorbilidadEspecialista.objects.filter(activo=False, **filtro_usuario).order_by('-created_at'))
-    arch_no_asistidos = list(PacienteNoAsistido.objects.filter(activo=False, **filtro_usuario).order_by('-created_at'))
-    arch_ecosonogramas = list(MorbilidadEcosonograma.objects.filter(activo=False, **filtro_usuario).order_by('-created_at'))
-
-    # Agregar tipo a cada registro archivado
-    for r in arch_emergencias:
-        r.tipo_mov = 'emergencia'
-        r.nombre_display = r.nombre_apellido
-    for r in arch_especialistas:
-        r.tipo_mov = 'especialista'
-        r.nombre_display = r.nombre_apellido
-    for r in arch_no_asistidos:
-        r.tipo_mov = 'no_asistido'
-        r.nombre_display = r.nombre_completo
-    for r in arch_ecosonogramas:
-        r.tipo_mov = 'ecosonograma'
-        r.nombre_display = r.nombre_apellido
-
-    archivados = sorted(
-        arch_emergencias + arch_especialistas + arch_no_asistidos + arch_ecosonogramas,
-        key=lambda x: x.created_at or hoy,
-        reverse=True
-    )
-    total_archivados = len(archivados)
-
-    # ── Timeline de actividad reciente (últimos 20 movimientos activos) ──
-    rec_em = list(MorbilidadEmergencia.objects.filter(activo=True, **filtro_usuario).order_by('-created_at')[:10])
-    rec_es = list(MorbilidadEspecialista.objects.filter(activo=True, **filtro_usuario).order_by('-created_at')[:10])
-    rec_na = list(PacienteNoAsistido.objects.filter(activo=True, **filtro_usuario).order_by('-created_at')[:10])
-    rec_ec = list(MorbilidadEcosonograma.objects.filter(activo=True, **filtro_usuario).order_by('-created_at')[:10])
-
-    for r in rec_em:
-        r.tipo_mov = 'emergencia'
-        r.nombre_display = r.nombre_apellido
-        r.detalle = r.medico
-    for r in rec_es:
-        r.tipo_mov = 'especialista'
-        r.nombre_display = r.nombre_apellido
-        r.detalle = f"{r.especialista} - {r.especialidad}"
-    for r in rec_na:
-        r.tipo_mov = 'no_asistido'
-        r.nombre_display = r.nombre_completo
-        r.detalle = f"{r.medico} - {r.especialidad}"
-    for r in rec_ec:
-        r.tipo_mov = 'ecosonograma'
-        r.nombre_display = r.nombre_apellido
-        r.detalle = f"{r.tipo_eco} - {r.medico}"
-
-    timeline = sorted(
-        rec_em + rec_es + rec_na + rec_ec,
-        key=lambda x: x.created_at or hoy,
-        reverse=True
-    )[:20]
-
-    # Nombres de meses
-    MESES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-             'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
-
-    context = {
-        'pacientes_atendidos': pacientes_atendidos,
-        'no_asistidos_mes': no_asistidos_mes,
-        'total_archivados': total_archivados,
-        'emergencias_mes': emergencias_mes,
-        'especialistas_mes': especialistas_mes,
-        'ecosonogramas_mes': ecosonogramas_mes,
-        'registros_activos_mes': emergencias_mes + especialistas_mes + ecosonogramas_mes,
-        'timeline': timeline,
-        'archivados': archivados,
-        'mes_nombre': MESES[hoy.month - 1],
-        'anio': hoy.year,
-    }
-    return render(request, 'reportes/movimientos.html', context)
-
-
-@login_required
-@rol_requerido('ADMIN', 'ESPECIALISTA')
-def restaurar_registro_view(request):
-    """Restaurar un registro archivado (activo = True)"""
-    if request.method == 'POST':
-        tipo = request.POST.get('tipo')
-        pk = request.POST.get('pk')
-
-        modelos = {
-            'emergencia': MorbilidadEmergencia,
-            'especialista': MorbilidadEspecialista,
-            'no_asistido': PacienteNoAsistido,
-            'ecosonograma': MorbilidadEcosonograma,
-        }
-
-        modelo = modelos.get(tipo)
-        if modelo and pk:
-            try:
-                registro = modelo.objects.get(pk=pk, activo=False)
-                registro.activo = True
-                registro.save()
-                BitacoraAuditoria.registrar(
-                    request.user, BitacoraAuditoria.Accion.EDITAR,
-                    f'Registro restaurado ({tipo}): ID {pk}', request, 'movimientos'
-                )
-                messages.success(request, 'Registro restaurado exitosamente.')
-            except modelo.DoesNotExist:
-                messages.error(request, 'Registro no encontrado.')
-
-    return redirect('movimientos')
-
-
-@login_required
-@rol_requerido('ADMIN')
-def eliminar_definitivo_view(request):
-    """Eliminar definitivamente un registro (solo ADMIN)"""
-    if request.method == 'POST':
-        tipo = request.POST.get('tipo')
-        pk = request.POST.get('pk')
-
-        modelos = {
-            'emergencia': MorbilidadEmergencia,
-            'especialista': MorbilidadEspecialista,
-            'no_asistido': PacienteNoAsistido,
-            'ecosonograma': MorbilidadEcosonograma,
-        }
-
-        modelo = modelos.get(tipo)
-        if modelo and pk:
-            try:
-                registro = modelo.objects.get(pk=pk, activo=False)
-                registro.delete()
-                BitacoraAuditoria.registrar(
-                    request.user, BitacoraAuditoria.Accion.ELIMINAR,
-                    f'Registro eliminado definitivamente ({tipo}): ID {pk}', request, 'movimientos'
-                )
-                messages.success(request, 'Registro eliminado definitivamente.')
-            except modelo.DoesNotExist:
-                messages.error(request, 'Registro no encontrado.')
-
-    return redirect('movimientos')
-
-
-@login_required
-@rol_requerido('ADMIN')
-def limpiar_archivados_view(request):
-    """Eliminar TODOS los archivados definitivamente (solo ADMIN)"""
-    if request.method == 'POST':
-        try:
-            total = 0
-            # Eliminamos de los modelos originales (esto debería estar sincronizado con Movimiento)
-            total += MorbilidadEmergencia.objects.filter(activo=False).delete()[0]
-            total += MorbilidadEspecialista.objects.filter(activo=False).delete()[0]
-            total += PacienteNoAsistido.objects.filter(activo=False).delete()[0]
-            total += MorbilidadEcosonograma.objects.filter(activo=False).delete()[0]
-            
-            # También limpiamos la tabla de Movimientos para registros archivados
-            Movimiento.objects.filter(activo=False).delete()
-
-            BitacoraAuditoria.registrar(
-                request.user, BitacoraAuditoria.Accion.ELIMINAR,
-                f'Limpieza total de archivados: {total} registros eliminados.', request, 'reportes'
-            )
-            messages.success(request, f'Se han eliminado definitivamente {total} registros archivados.')
-        except Exception as e:
-            messages.error(request, f'Error al limpiar archivados: {str(e)}')
-            
-        return redirect('movimientos')
-        
-    return redirect('dashboard')
-
 
 # ═════════════════════════════════════════════
 # MOVIMIENTOS - Panel de Actividad + Archivados
@@ -1285,6 +1089,11 @@ def auto_organizar_biblioteca_view(request):
             registros = model_class.objects.all()
             count_cambios = 0
             ct = ContentType.objects.get_for_model(model_class)
+            tipo_mov = ''
+            if model_class == MorbilidadEmergencia: tipo_mov = 'emergencia'
+            elif model_class == MorbilidadEcosonograma: tipo_mov = 'ecosonograma'
+            elif model_class == MorbilidadEspecialista: tipo_mov = 'especialista'
+            elif model_class == PacienteNoAsistido: tipo_mov = 'no_asistido'
             
             for obj in registros:
                 fecha_real = getattr(obj, campo_fecha)
@@ -1306,16 +1115,49 @@ def auto_organizar_biblioteca_view(request):
                     obj.activo = False
                     obj.save()
                 
-                # 2. Sincronizar el Movimiento para que aparezca en la carpeta correcta
-                # Buscamos el movimiento asociado a este registro
-                movs = Movimiento.objects.filter(content_type=ct, object_id=obj.pk)
-                for m in movs:
-                    # Si la fecha del movimiento no coincide con la del paciente, corregimos
-                    if m.created_at.year != fecha_real.year or m.created_at.month != fecha_real.month or m.activo != obj.activo:
-                        m.created_at = fecha_real
-                        m.activo = obj.activo
-                        m.save()
+                # 2. Sincronizar el Movimiento
+                # Calculamos el detalle actual según la lógica de señales
+                nombre_display = getattr(obj, 'nombre_apellido', getattr(obj, 'nombre_completo', 'Sin nombre'))
+                detalle = ''
+                if tipo_mov == 'emergencia':
+                    detalle = f"Diag: {getattr(obj, 'diagnostico', 'Sin diagnóstico')} | Med: {obj.medico}"
+                elif tipo_mov == 'especialista':
+                    detalle = f"Diag: {obj.diagnostico} | {obj.especialista} - {obj.especialidad}"
+                elif tipo_mov == 'ecosonograma':
+                    detalle = f"Diag: {obj.diagnostico} | {obj.tipo_eco} - {obj.medico}"
+                elif tipo_mov == 'no_asistido':
+                    detalle = f"{obj.medico} - {obj.especialidad}"
+
+                # Buscamos o creamos el movimiento
+                mov, created = Movimiento.objects.get_or_create(
+                    content_type=ct, object_id=obj.pk,
+                    defaults={
+                        'tipo_mov': tipo_mov,
+                        'nombre_display': nombre_display,
+                        'detalle': detalle,
+                        'usuario': getattr(obj, 'usuario', None),
+                        'activo': obj.activo,
+                        'created_at': fecha_real
+                    }
+                )
+
+                if not created:
+                    # Si ya existía, verificamos si hay que actualizar
+                    if (mov.created_at.year != fecha_real.year or 
+                        mov.created_at.month != fecha_real.month or 
+                        mov.activo != obj.activo or
+                        mov.detalle != detalle or
+                        mov.nombre_display != nombre_display):
+                        
+                        mov.created_at = fecha_real
+                        mov.activo = obj.activo
+                        mov.detalle = detalle
+                        mov.nombre_display = nombre_display
+                        mov.save()
                         count_cambios += 1
+                else:
+                    count_cambios += 1
+
             return count_cambios
 
         c1 = reindexar_tipo(MorbilidadEmergencia, 'fecha_diagnostico')
@@ -1465,7 +1307,7 @@ def monitor_view(request):
     actividad = Movimiento.objects.filter(activo=True).select_related('usuario').order_by('-created_at')[:50]
     return render(request, 'reportes/monitor.html', {
         'actividad': actividad,
-        'fecha_actual': timezone.now().strftime('%d/%m/%Y')
+        'fecha_actual': timezone.localtime(timezone.now()).strftime('%d/%m/%Y')
     })
 
 

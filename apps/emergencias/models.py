@@ -22,6 +22,7 @@ class MorbilidadEmergencia(models.Model):
     telefono = models.CharField(max_length=20, blank=True, default='', verbose_name='Teléfono')
     codigo = models.CharField(max_length=50, blank=True, default='', verbose_name='Código')
     medico = models.CharField(max_length=150, verbose_name='Médico')
+    diagnostico = models.TextField(verbose_name='Diagnóstico', blank=True, default='')
     fecha_diagnostico = models.DateField(verbose_name='Fecha de Diagnóstico')
     usuario = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.SET_NULL,

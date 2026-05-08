@@ -55,6 +55,16 @@
                         </button>
                     </div>
                 </div>
+                <div class="mb-3 d-flex justify-content-center">
+                    {{ form.captcha }}
+                </div>
+                {% if form.captcha.errors %}
+                <div class="text-danger extra-small mb-2 text-center">
+                    {% for error in form.captcha.errors %}
+                    {{ error }}
+                    {% endfor %}
+                </div>
+                {% endif %}
                 <button type="submit" class="btn-login mt-2">
                     <i class="bi bi-shield-lock-fill"></i> Iniciar Sesión
                 </button>

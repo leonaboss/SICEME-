@@ -16,7 +16,7 @@ from django.db.models import Q
 
 from .models import Usuario, BitacoraAuditoria
 from .forms import (
-    LoginForm, OTPForm, RegistroUsuarioForm, EditarUsuarioForm,
+    LoginForm, OTPForm, RegistroUsuarioForm, AdminRegistroUsuarioForm, EditarUsuarioForm,
     CambiarPasswordForm, ReautenticarForm, RecuperarPasswordForm,
     NuevoPasswordForm, PerfilUsuarioForm
 )
@@ -106,7 +106,7 @@ def registro_publico_view(request):
         form = RegistroUsuarioForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
-            user.rol = Usuario.Rol.PUBLICO
+            # El rol ya fue validado en el formulario (con el código secreto si es ADMIN)
             user.is_verified = False # Obligatorio verificar por OTP
             user.save()
             
@@ -114,24 +114,26 @@ def registro_publico_view(request):
             otp_code = user.generar_otp()
             try:
                 send_mail(
-                    'SICEME - Código de Verificación de Cuenta',
+                    'SICEME - Código de Verificación',
                     f'Hola {user.username},\n\n'
-                    f'Gracias por registrarte. Tu código de verificación es: {otp_code}\n'
+                    f'Tu código de verificación es: {otp_code}\n'
                     f'Ingresa este código para activar tu cuenta. Expira en {settings.OTP_EXPIRY_MINUTES} minutos.',
                     settings.DEFAULT_FROM_EMAIL,
                     [user.email],
                     fail_silently=False,
                 )
+                logger.info(f'OTP enviado a {user.email} para el usuario {user.username}')
                 BitacoraAuditoria.registrar(
                     user, BitacoraAuditoria.Accion.CREAR,
                     f'Registro: {user.username}. OTP enviado.', request, 'usuarios'
                 )
                 request.session['pre_otp_user_id'] = user.pk
                 request.session['pre_otp_username'] = user.username
+                messages.success(request, f'Código de verificación enviado a {user.email}.')
                 return redirect('verificar_otp')
             except Exception as e:
-                logger.error(f'Error enviando email de registro: {e}')
-                messages.warning(request, 'Cuenta creada, pero hubo un error al enviar el código de activación. Contacte a soporte.')
+                logger.error(f'Error crítico enviando email a {user.email}: {e}')
+                messages.warning(request, 'Cuenta creada, pero no pudimos enviarte el código. Por favor, solicita un reenvío o contacta al administrador.')
                 return redirect('login')
     else:
         form = RegistroUsuarioForm()
@@ -280,18 +282,38 @@ def logout_view(request):
 def registro_view(request):
     """Registro de nuevos usuarios (solo admin)"""
     if request.method == 'POST':
-        form = RegistroUsuarioForm(request.POST)
+        form = AdminRegistroUsuarioForm(request.POST)
         if form.is_valid():
-            usuario = form.save()
+            usuario = form.save(commit=False)
+            usuario.is_verified = False # También requiere verificación para mayor seguridad
+            usuario.save()
+            
+            # Generar y enviar OTP al nuevo usuario
+            otp_code = usuario.generar_otp()
+            try:
+                send_mail(
+                    'SICEME - Código de Activación de Cuenta',
+                    f'Hola {usuario.username},\n\n'
+                    f'Un administrador ha creado tu cuenta en SICEME.\n'
+                    f'Tu código de activación es: {otp_code}\n'
+                    f'Usa este código para verificar tu cuenta al iniciar sesión.',
+                    settings.DEFAULT_FROM_EMAIL,
+                    [usuario.email],
+                    fail_silently=False,
+                )
+                messages.success(request, f'Usuario "{usuario.username}" creado. Se envió un código a {usuario.email}.')
+            except Exception as e:
+                logger.error(f'Error enviando email en registro admin: {e}')
+                messages.warning(request, f'Usuario creado, pero no se pudo enviar el correo a {usuario.email}.')
+            
             BitacoraAuditoria.registrar(
                 request.user, BitacoraAuditoria.Accion.CREAR,
-                f'Usuario creado: {usuario.username} (Rol: {usuario.rol})',
+                f'Usuario creado por admin: {usuario.username}',
                 request, 'usuarios'
             )
-            messages.success(request, f'Usuario "{usuario.username}" creado exitosamente.')
             return redirect('lista_usuarios')
     else:
-        form = RegistroUsuarioForm()
+        form = AdminRegistroUsuarioForm()
 
     return render(request, 'usuarios/registro.html', {'form': form})
 

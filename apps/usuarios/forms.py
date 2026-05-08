@@ -8,6 +8,7 @@ from django.contrib.auth.forms import (
     PasswordResetForm, SetPasswordForm
 )
 from django.core.exceptions import ValidationError
+from django_recaptcha.fields import ReCaptchaField
 from .models import Usuario
 
 
@@ -31,6 +32,7 @@ class LoginForm(forms.Form):
             'id': 'login-password'
         })
     )
+    captcha = ReCaptchaField(label='')
 
 
 class OTPForm(forms.Form):
@@ -97,12 +99,22 @@ class RegistroUsuarioForm(UserCreationForm):
             'id': 'registro-rol'
         })
     )
+    admin_code = forms.CharField(
+        label='Código de Validación Administrador',
+        required=False,
+        help_text='Solo si elige el rol de Administrador',
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Ingrese el código secreto',
+            'id': 'registro-admin-code'
+        })
+    )
 
     class Meta:
         model = Usuario
         fields = [
             'username', 'email', 'first_name', 'last_name',
-            'telefono', 'rol', 'password1', 'password2'
+            'telefono', 'rol', 'admin_code', 'password1', 'password2'
         ]
         widgets = {
             'username': forms.TextInput(attrs={
@@ -126,11 +138,60 @@ class RegistroUsuarioForm(UserCreationForm):
         })
         self.fields['password1'].help_text = 'La contraseña debe tener al menos 16 caracteres.'
 
+        # Lógica de seguridad dinámica para el Rol
+        try:
+            admin_exists = Usuario.objects.filter(rol=Usuario.Rol.ADMIN).exists()
+            if admin_exists:
+                # Si ya hay un admin, quitamos la opción de Administrador del registro público
+                choices = list(self.fields['rol'].choices)
+                # El formato de choices es [('VALOR', 'Etiqueta'), ...]
+                new_choices = [c for c in choices if c[0] != Usuario.Rol.ADMIN]
+                self.fields['rol'].choices = new_choices
+                # Si el admin no existe, el campo admin_code será validado por clean()
+        except Exception:
+            # Por si la base de datos no está lista o no existe la tabla aún
+            pass
+
     def clean_email(self):
         email = self.cleaned_data.get('email')
         if Usuario.objects.filter(email=email).exists():
             raise ValidationError('Ya existe un usuario con este correo electrónico.')
         return email
+
+    def clean(self):
+        cleaned_data = super().clean()
+        rol = cleaned_data.get('rol')
+        admin_code = cleaned_data.get('admin_code')
+
+        if rol == Usuario.Rol.ADMIN:
+            from django.conf import settings
+            secret_code = getattr(settings, 'ADMIN_REGISTRATION_CODE', 'SICEME_ADMIN_2024')
+            if admin_code != secret_code:
+                self.add_error('admin_code', 'Código de validación incorrecto para el rol de Administrador.')
+        
+        return cleaned_data
+
+
+class AdminRegistroUsuarioForm(RegistroUsuarioForm):
+    """Formulario de registro usado por administradores (incluye rol)"""
+    rol = forms.ChoiceField(
+        label='Rol',
+        choices=Usuario.Rol.choices,
+        initial=Usuario.Rol.PUBLICO,
+        widget=forms.Select(attrs={
+            'class': 'form-select',
+            'id': 'registro-rol'
+        })
+    )
+
+    class Meta(RegistroUsuarioForm.Meta):
+        fields = RegistroUsuarioForm.Meta.fields + ['rol']
+
+    def __init__(self, *args, **kwargs):
+        # Saltamos la lógica de ocultar el rol de la clase padre
+        super(RegistroUsuarioForm, self).__init__(*args, **kwargs)
+        # Aseguramos que el admin vea todas las opciones
+        self.fields['rol'].choices = Usuario.Rol.choices
 
 
 class EditarUsuarioForm(forms.ModelForm):

@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_recaptcha',
     # SICEME Apps
     'apps.usuarios',
     'apps.especialistas',
@@ -133,7 +134,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'unefmsiceme@gmail.com'
 EMAIL_HOST_PASSWORD = 'hlvkmtpqhmglcvmm'
-DEFAULT_FROM_EMAIL = 'SICEME <unefmsiceme@gmail.com>'
+DEFAULT_FROM_EMAIL = 'unefmsiceme@gmail.com'
 
 # Security Settings
 SESSION_COOKIE_HTTPONLY = True
@@ -143,6 +144,9 @@ CSRF_COOKIE_SECURE = not DEBUG
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = 'DENY'
+RECAPTCHA_PUBLIC_KEY = os.getenv('RECAPTCHA_PUBLIC_KEY', '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI')
+RECAPTCHA_PRIVATE_KEY = os.getenv('RECAPTCHA_PRIVATE_KEY', '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe')
+SILENCED_SYSTEM_CHECKS = ['django_recaptcha.recaptcha_test_key_error']
 
 if not DEBUG:
     SECURE_SSL_REDIRECT = True
@@ -161,6 +165,9 @@ ACCOUNT_MAX_LOGIN_ATTEMPTS = 3
 
 # OTP Settings
 OTP_EXPIRY_MINUTES = 5
+
+# Código secreto para registro de administradores
+ADMIN_REGISTRATION_CODE = os.getenv('ADMIN_REGISTRATION_CODE', 'SICEME_ADMIN_2024')
 
 # Logging estructurado
 LOGGING = {
