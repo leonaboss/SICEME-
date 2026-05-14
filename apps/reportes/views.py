@@ -2,20 +2,17 @@
 SICEME - Vistas de Dashboard y Reportes
 Dashboard principal, estadísticas, exportación Excel, API JSON
 """
-import json
-from datetime import date
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse, HttpResponse
 from django.db.models import Count, Sum, Q, Value
 from django.db.models.functions import TruncMonth, ExtractMonth, ExtractYear
-from django.db import models
+from django.db import models, transaction
 from django.utils import timezone
 import openpyxl
 from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
 import logging
-import traceback
 
 logger = logging.getLogger(__name__)
 
@@ -607,61 +604,118 @@ def exportar_excel_view(request):
 
     if tipo == 'emergencias':
         ws.title = 'Emergencias'
-        # Orden HTML: [Cédula, Nombre y Apellido, Edad, Sexo, Dependencia, Teléfono, Código, Médico, Fecha]
-        headers = ['#', 'Cédula', 'Nombre y Apellido', 'Edad', 'Sexo', 'Dependencia', 'Teléfono', 'Código', 'Médico', 'Fecha']
-        for col, header in enumerate(headers, 1):
-            cell = ws.cell(row=1, column=col, value=header)
+        
+        # Estilo para el encabezado verde principal
+        green_fill = PatternFill(start_color='8BC34A', end_color='8BC34A', fill_type='solid')
+        title_font = Font(bold=True, color='FFFFFF', size=14)
+        
+        ws.merge_cells('A1:Q2')
+        ws['A1'] = "REGISTRO DE MORBILIDAD DE EMERGENCIAS"
+        ws['A1'].font = title_font
+        ws['A1'].fill = green_fill
+        ws['A1'].alignment = Alignment(horizontal='center', vertical='center')
+
+        # Encabezados en Fila 3 (Con Gaps)
+        headers_config = [
+            ('Cédula', 1), ('Col1', 2), ('Nombre y Apellido', 3), ('Col2', 4), ('Edad', 5), ('Col3', 6), 
+            ('Sexo', 7), ('Col4', 8), ('Dependencia', 9), ('Col5', 10), ('Teléfono', 11), ('Col6', 12), 
+            ('Código', 13), ('Col7', 14), ('Médico', 15), ('Col8', 16), ('Fecha', 17)
+        ]
+
+        for text, col in headers_config:
+            cell = ws.cell(row=3, column=col, value=text)
             cell.font = header_font
             cell.fill = header_fill
             cell.alignment = header_alignment
             cell.border = thin_border
 
         registros = MorbilidadEmergencia.objects.filter(
-            fecha_diagnostico__year=anio, **filtro_usuario
-        ).order_by('fecha_diagnostico')
+            activo=True, fecha_diagnostico__year=anio, **filtro_usuario
+        ).order_by('-fecha_diagnostico')
 
-        for i, reg in enumerate(registros, 1):
-            ws.cell(row=i+1, column=1, value=i).border = thin_border
-            ws.cell(row=i+1, column=2, value=reg.cedula).border = thin_border
-            ws.cell(row=i+1, column=3, value=reg.nombre_apellido).border = thin_border
-            ws.cell(row=i+1, column=4, value=reg.edad).border = thin_border
-            ws.cell(row=i+1, column=5, value=reg.get_sexo_display()).border = thin_border
-            ws.cell(row=i+1, column=6, value=reg.dependencia).border = thin_border
-            ws.cell(row=i+1, column=7, value=reg.telefono).border = thin_border
-            ws.cell(row=i+1, column=8, value=reg.codigo).border = thin_border
-            ws.cell(row=i+1, column=9, value=reg.medico).border = thin_border
-            ws.cell(row=i+1, column=10, value=str(reg.fecha_diagnostico)).border = thin_border
+        for i, reg in enumerate(registros, 4):
+            ws.cell(row=i, column=1, value=reg.cedula).border = thin_border
+            ws.cell(row=i, column=2, value="").border = thin_border
+            ws.cell(row=i, column=3, value=reg.nombre_apellido).border = thin_border
+            ws.cell(row=i, column=4, value="").border = thin_border
+            ws.cell(row=i, column=5, value=reg.edad).border = thin_border
+            ws.cell(row=i, column=6, value="").border = thin_border
+            ws.cell(row=i, column=7, value=reg.get_sexo_display()).border = thin_border
+            ws.cell(row=i, column=8, value="").border = thin_border
+            ws.cell(row=i, column=9, value=reg.dependencia).border = thin_border
+            ws.cell(row=i, column=10, value="").border = thin_border
+            ws.cell(row=i, column=11, value=reg.telefono).border = thin_border
+            ws.cell(row=i, column=12, value="").border = thin_border
+            ws.cell(row=i, column=13, value=reg.codigo).border = thin_border
+            ws.cell(row=i, column=14, value="").border = thin_border
+            ws.cell(row=i, column=15, value=reg.medico).border = thin_border
+            ws.cell(row=i, column=16, value="").border = thin_border
+            ws.cell(row=i, column=17, value=str(reg.fecha_diagnostico)).border = thin_border
 
-        for col in range(1, len(headers)+1):
+        for col in range(1, 18):
             ws.column_dimensions[openpyxl.utils.get_column_letter(col)].width = 18
 
     elif tipo == 'morbilidad_especialista':
         ws.title = 'Especialistas'
-        headers = ['#', 'Nombre y Apellido', 'Edad', 'Sexo', 'Motivo Consulta', 'Diagnóstico', 'Próxima Cita', 'Especialista', 'Especialidad']
-        for col, header in enumerate(headers, 1):
-            cell = ws.cell(row=1, column=col, value=header)
+
+        # Estilo para el encabezado verde principal
+        green_fill = PatternFill(start_color='8BC34A', end_color='8BC34A', fill_type='solid')
+        title_font = Font(bold=True, color='FFFFFF', size=14)
+        
+        # Combinar celdas para el título (Filas 1 y 2)
+        ws.merge_cells('A1:M2')
+        ws['A1'] = "REGISTRO DE MORBILIDAD DE ESPECIALISTAS"
+        ws['A1'].font = title_font
+        ws['A1'].fill = green_fill
+        ws['A1'].alignment = Alignment(horizontal='center', vertical='center')
+
+        # Encabezados en Fila 3 (Con Gaps)
+        # A: Nombre, B: Gap, C: Edad, D: Gap, E: Sexo, F: Gap, G: Motivo, H: Gap, I: Diagnostico, J: Gap, K: Cita, L: Esp, M: Espec
+        headers_config = [
+            ('Nombre y Apellido', 1),
+            ('Columna1', 2),
+            ('EDAD', 3),
+            ('Columna2', 4),
+            ('SEXO', 5),
+            ('Columna3', 6),
+            ('MOTIVO DE LA CONSULTA', 7),
+            ('Columna4', 8),
+            ('DIAGNOSTICO', 9),
+            ('Columna5', 10),
+            ('PROXIMA CITA', 11),
+            ('ESPECIALISTA', 12),
+            ('ESPECIALIDAD', 13)
+        ]
+
+        for text, col in headers_config:
+            cell = ws.cell(row=3, column=col, value=text)
             cell.font = header_font
             cell.fill = header_fill
             cell.alignment = header_alignment
             cell.border = thin_border
 
+        # Filtro corregido: usar created_at en lugar de proxima_cita para no perder registros
         registros = MorbilidadEspecialista.objects.filter(
-            proxima_cita__year=anio, **filtro_usuario
-        ).order_by('proxima_cita')
+            activo=True, created_at__year=anio, **filtro_usuario
+        ).order_by('-created_at')
 
-        for i, reg in enumerate(registros, 1):
-            ws.cell(row=i+1, column=1, value=i).border = thin_border
-            ws.cell(row=i+1, column=2, value=reg.nombre_apellido).border = thin_border
-            ws.cell(row=i+1, column=3, value=reg.edad).border = thin_border
-            ws.cell(row=i+1, column=4, value=reg.get_sexo_display()).border = thin_border
-            ws.cell(row=i+1, column=5, value=reg.motivo_consulta).border = thin_border
-            ws.cell(row=i+1, column=6, value=reg.diagnostico).border = thin_border
-            ws.cell(row=i+1, column=7, value=str(reg.proxima_cita) if reg.proxima_cita else "-").border = thin_border
-            ws.cell(row=i+1, column=8, value=reg.especialista).border = thin_border
-            ws.cell(row=i+1, column=9, value=reg.especialidad).border = thin_border
+        for i, reg in enumerate(registros, 4):  # Empezar en fila 4
+            ws.cell(row=i, column=1, value=reg.nombre_apellido).border = thin_border
+            ws.cell(row=i, column=2, value="").border = thin_border
+            ws.cell(row=i, column=3, value=reg.edad).border = thin_border
+            ws.cell(row=i, column=4, value="").border = thin_border
+            ws.cell(row=i, column=5, value=reg.get_sexo_display()).border = thin_border
+            ws.cell(row=i, column=6, value="").border = thin_border
+            ws.cell(row=i, column=7, value=reg.motivo_consulta).border = thin_border
+            ws.cell(row=i, column=8, value="").border = thin_border
+            ws.cell(row=i, column=9, value=reg.diagnostico).border = thin_border
+            ws.cell(row=i, column=10, value="").border = thin_border
+            ws.cell(row=i, column=11, value=str(reg.proxima_cita) if reg.proxima_cita else "-").border = thin_border
+            ws.cell(row=i, column=12, value=reg.especialista).border = thin_border
+            ws.cell(row=i, column=13, value=reg.especialidad).border = thin_border
 
-        for col in range(1, len(headers)+1):
-            ws.column_dimensions[openpyxl.utils.get_column_letter(col)].width = 18
+        for col in range(1, 14):
+            ws.column_dimensions[openpyxl.utils.get_column_letter(col)].width = 20
 
     elif tipo == 'estadisticas':
         ws.title = 'Estadísticas'
@@ -721,61 +775,106 @@ def exportar_excel_view(request):
 
     elif tipo == 'no_asistidos':
         ws.title = 'No Asistidos'
-        # Orden HTML: [Nombre Completo, Edad, Sexo, Médico, Especialidad, Fecha Cita]
-        headers = ['#', 'Nombre Completo', 'Edad', 'Sexo', 'Médico', 'Especialidad', 'Fecha Cita']
-        for col, header in enumerate(headers, 1):
-            cell = ws.cell(row=1, column=col, value=header)
+        
+        # Estilo para el encabezado verde principal
+        green_fill = PatternFill(start_color='8BC34A', end_color='8BC34A', fill_type='solid')
+        title_font = Font(bold=True, color='FFFFFF', size=14)
+        
+        ws.merge_cells('A1:K2')
+        ws['A1'] = "REGISTRO DE PACIENTES NO ASISTIDOS"
+        ws['A1'].font = title_font
+        ws['A1'].fill = green_fill
+        ws['A1'].alignment = Alignment(horizontal='center', vertical='center')
+
+        # Encabezados en Fila 3 (Con Gaps)
+        headers_config = [
+            ('Nombre Completo', 1), ('Col1', 2), ('Edad', 3), ('Col2', 4), ('Sexo', 5), ('Col3', 6), 
+            ('Médico', 7), ('Col4', 8), ('Especialidad', 9), ('Col5', 10), ('Fecha Cita', 11)
+        ]
+
+        for text, col in headers_config:
+            cell = ws.cell(row=3, column=col, value=text)
             cell.font = header_font
             cell.fill = header_fill
             cell.alignment = header_alignment
             cell.border = thin_border
 
         registros = PacienteNoAsistido.objects.filter(
-            fecha_cita__year=anio, **filtro_usuario
-        ).order_by('fecha_cita')
+            activo=True, fecha_cita__year=anio, **filtro_usuario
+        ).order_by('-fecha_cita')
 
-        for i, reg in enumerate(registros, 1):
-            ws.cell(row=i+1, column=1, value=i).border = thin_border
-            ws.cell(row=i+1, column=2, value=reg.nombre_completo).border = thin_border
-            ws.cell(row=i+1, column=3, value=reg.edad).border = thin_border
-            ws.cell(row=i+1, column=4, value=reg.get_sexo_display()).border = thin_border
-            ws.cell(row=i+1, column=5, value=reg.medico).border = thin_border
-            ws.cell(row=i+1, column=6, value=reg.especialidad).border = thin_border
-            ws.cell(row=i+1, column=7, value=str(reg.fecha_cita)).border = thin_border
+        for i, reg in enumerate(registros, 4):
+            ws.cell(row=i, column=1, value=reg.nombre_completo).border = thin_border
+            ws.cell(row=i, column=2, value="").border = thin_border
+            ws.cell(row=i, column=3, value=reg.edad).border = thin_border
+            ws.cell(row=i, column=4, value="").border = thin_border
+            ws.cell(row=i, column=5, value=reg.get_sexo_display()).border = thin_border
+            ws.cell(row=i, column=6, value="").border = thin_border
+            ws.cell(row=i, column=7, value=reg.medico).border = thin_border
+            ws.cell(row=i, column=8, value="").border = thin_border
+            ws.cell(row=i, column=9, value=reg.especialidad).border = thin_border
+            ws.cell(row=i, column=10, value="").border = thin_border
+            ws.cell(row=i, column=11, value=str(reg.fecha_cita)).border = thin_border
 
-        for col in range(1, len(headers)+1):
+        for col in range(1, 12):
             ws.column_dimensions[openpyxl.utils.get_column_letter(col)].width = 18
 
     elif tipo == 'ecosonogramas':
         ws.title = 'Ecosonogramas'
-        # Orden HTML: [Nombre y Apellido, Edad, Sexo, Cédula, Procedencia, Tipo Eco, N° de Cédula, Diagnóstico, Médico, Fecha, Planes]
-        headers = ['#', 'Nombre y Apellido', 'Edad', 'Sexo', 'Cédula', 'Procedencia', 'Tipo Eco', 'N° de Cédula', 'Diagnóstico', 'Médico', 'Fecha', 'Planes']
-        for col, header in enumerate(headers, 1):
-            cell = ws.cell(row=1, column=col, value=header)
+        
+        # Estilo para el encabezado verde principal
+        green_fill = PatternFill(start_color='8BC34A', end_color='8BC34A', fill_type='solid')
+        title_font = Font(bold=True, color='FFFFFF', size=14)
+        
+        ws.merge_cells('A1:W2')
+        ws['A1'] = "REGISTRO DE MORBILIDAD DE ECOSONOGRAMAS"
+        ws['A1'].font = title_font
+        ws['A1'].fill = green_fill
+        ws['A1'].alignment = Alignment(horizontal='center', vertical='center')
+
+        # Encabezados en Fila 3 (Con Gaps)
+        headers_config = [
+            ('Nombre y Apellido', 1), ('Col1', 2), ('Edad', 3), ('Col2', 4), ('Sexo', 5), ('Col3', 6), 
+            ('Cédula', 7), ('Col4', 8), ('Procedencia', 9), ('Col5', 10), ('Tipo Eco', 11), ('Col6', 12), 
+            ('N° de Cédula', 13), ('Col7', 14), ('Diagnóstico', 15), ('Col8', 16), ('Médico', 17), ('Col9', 18), 
+            ('Fecha', 19), ('Col10', 20), ('Planes', 21)
+        ]
+
+        for text, col in headers_config:
+            cell = ws.cell(row=3, column=col, value=text)
             cell.font = header_font
             cell.fill = header_fill
             cell.alignment = header_alignment
             cell.border = thin_border
 
         registros = MorbilidadEcosonograma.objects.filter(
-            fecha__year=anio, **filtro_usuario
-        ).order_by('fecha')
+            activo=True, fecha__year=anio, **filtro_usuario
+        ).order_by('-fecha')
 
-        for i, reg in enumerate(registros, 1):
-            ws.cell(row=i+1, column=1, value=i).border = thin_border
-            ws.cell(row=i+1, column=2, value=reg.nombre_apellido).border = thin_border
-            ws.cell(row=i+1, column=3, value=reg.edad).border = thin_border
-            ws.cell(row=i+1, column=4, value=reg.get_sexo_display()).border = thin_border
-            ws.cell(row=i+1, column=5, value=reg.cedula).border = thin_border
-            ws.cell(row=i+1, column=6, value=reg.procedencia).border = thin_border
-            ws.cell(row=i+1, column=7, value=reg.tipo_eco).border = thin_border
-            ws.cell(row=i+1, column=8, value=reg.numero_cedula).border = thin_border
-            ws.cell(row=i+1, column=9, value=reg.diagnostico).border = thin_border
-            ws.cell(row=i+1, column=10, value=reg.medico).border = thin_border
-            ws.cell(row=i+1, column=11, value=str(reg.fecha)).border = thin_border
-            ws.cell(row=i+1, column=12, value=reg.planes).border = thin_border
+        for i, reg in enumerate(registros, 4):
+            ws.cell(row=i, column=1, value=reg.nombre_apellido).border = thin_border
+            ws.cell(row=i, column=2, value="").border = thin_border
+            ws.cell(row=i, column=3, value=reg.edad).border = thin_border
+            ws.cell(row=i, column=4, value="").border = thin_border
+            ws.cell(row=i, column=5, value=reg.get_sexo_display()).border = thin_border
+            ws.cell(row=i, column=6, value="").border = thin_border
+            ws.cell(row=i, column=7, value=reg.cedula).border = thin_border
+            ws.cell(row=i, column=8, value="").border = thin_border
+            ws.cell(row=i, column=9, value=reg.procedencia).border = thin_border
+            ws.cell(row=i, column=10, value="").border = thin_border
+            ws.cell(row=i, column=11, value=reg.tipo_eco).border = thin_border
+            ws.cell(row=i, column=12, value="").border = thin_border
+            ws.cell(row=i, column=13, value=reg.numero_cedula).border = thin_border
+            ws.cell(row=i, column=14, value="").border = thin_border
+            ws.cell(row=i, column=15, value=reg.diagnostico).border = thin_border
+            ws.cell(row=i, column=16, value="").border = thin_border
+            ws.cell(row=i, column=17, value=reg.medico).border = thin_border
+            ws.cell(row=i, column=18, value="").border = thin_border
+            ws.cell(row=i, column=19, value=str(reg.fecha)).border = thin_border
+            ws.cell(row=i, column=20, value="").border = thin_border
+            ws.cell(row=i, column=21, value=reg.planes).border = thin_border
 
-        for col in range(1, len(headers)+1):
+        for col in range(1, 22):
             ws.column_dimensions[openpyxl.utils.get_column_letter(col)].width = 18
 
     response = HttpResponse(
@@ -974,7 +1073,6 @@ def biblioteca_view(request):
 @rol_requerido('ADMIN', 'ESPECIALISTA')
 def restaurar_masivo_view(request):
     """Restaurar una cantidad específica de registros archivados recientemente."""
-    from django.db import transaction
     if request.method == 'POST':
         cantidad_str = request.POST.get('cantidad')
         try:
@@ -1078,7 +1176,6 @@ def auto_organizar_biblioteca_view(request):
     Escanea TODOS los registros (activos e inactivos) y los organiza en la biblioteca 
     según su fecha clínica real. Corrige carpetas mal ubicadas.
     """
-    from django.db import transaction
     from django.contrib.contenttypes.models import ContentType
     hoy = timezone.now()
     inicio_mes = hoy.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
@@ -1214,6 +1311,47 @@ def restaurar_registro_view(request):
             messages.error(request, 'El registro de movimiento no existe o ya está activo.')
         except Exception as e:
             messages.error(request, f'Error crítico al restaurar: {str(e)}')
+
+    return redirect('movimientos')
+
+
+@login_required
+@rol_requerido('ADMIN', 'ESPECIALISTA', 'PUBLICO')
+def eliminar_registro_permanente_view(request):
+    """Eliminar permanentemente un registro archivado y su movimiento"""
+    if request.method == 'POST':
+        pk_movimiento = request.POST.get('pk')
+
+        try:
+            movimiento = Movimiento.objects.get(pk=pk_movimiento, activo=False)
+
+            # Seguridad: Solo el dueño o el admin pueden eliminar permanentemente
+            if request.user.rol != 'ADMIN' and movimiento.usuario != request.user:
+                messages.error(request, 'No tiene permiso para eliminar permanentemente este registro.')
+                return redirect('movimientos')
+
+            registro_original = movimiento.registro_original
+            nombre = movimiento.nombre_display
+            tipo = movimiento.tipo_mov
+            
+            # 1. Eliminar el registro original si existe
+            if registro_original:
+                registro_original.delete()
+            
+            # 2. Eliminar el movimiento
+            movimiento.delete()
+
+            BitacoraAuditoria.registrar(
+                request.user, BitacoraAuditoria.Accion.ELIMINAR,
+                f'Registro ELIMINADO PERMANENTEMENTE ({tipo}): {nombre}', 
+                request, 'reportes'
+            )
+            messages.success(request, f'Registro de "{nombre}" eliminado permanentemente.')
+                
+        except Movimiento.DoesNotExist:
+            messages.error(request, 'El registro no existe o ya no está en la papelera.')
+        except Exception as e:
+            messages.error(request, f'Error al eliminar permanentemente: {str(e)}')
 
     return redirect('movimientos')
 

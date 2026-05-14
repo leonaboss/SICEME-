@@ -150,6 +150,11 @@
                     <button type="submit" class="btn btn-outline-secondary">Ir</button>
                 </div>
             </form>
+            {% if total_archivados > 0 and user.rol == 'ADMIN' %}
+            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalVaciarPapelera">
+                <i class="bi bi-trash-fill"></i> Vaciar Papelera
+            </button>
+            {% endif %}
         </div>
     </div>
     <div class="table-responsive">
@@ -206,6 +211,13 @@
                                     <i class="bi bi-arrow-counterclockwise"></i>
                                 </button>
                             </form>
+                            <form method="post" action="{% url 'eliminar_registro_permanente' %}" class="d-inline" onsubmit="return confirm('¿Está seguro de que desea ELIMINAR PERMANENTEMENTE este registro? Esta acción no se puede deshacer.');">
+                                {% csrf_token %}
+                                <input type="hidden" name="pk" value="{{ reg.pk }}">
+                                <button type="submit" class="btn-danger-sm" title="Eliminar Permanentemente">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
                         </div>
                     </td>
                 </tr>
@@ -255,6 +267,37 @@
                     {% csrf_token %}
                     <button type="submit" class="btn btn-siceme" style="background-color: var(--warning); border-color: var(--warning); color: #000;">
                         <i class="bi bi-eraser-fill"></i> Limpiar Todo
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Vaciar Papelera (Admin) -->
+<div class="modal fade" id="modalVaciarPapelera" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-trash-fill text-danger"></i>
+                    Vaciar Papelera Definitivamente
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Está seguro de que desea eliminar <strong>TODOS</strong> los registros archivados permanentemente?</p>
+                <div class="alert alert-danger py-2 mb-0">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <strong>¡ATENCIÓN!</strong> Esta acción es irreversible. Se borrarán definitivamente todos los registros de la papelera de todos los módulos.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form method="post" action="{% url 'limpiar_archivados' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash-fill"></i> Borrar Todo Definitivamente
                     </button>
                 </form>
             </div>

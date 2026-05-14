@@ -201,9 +201,19 @@ def procesar_importacion_excel(archivo_xlsx, tipo, usuario):
         filas = list(ws.iter_rows(values_only=True))
         if len(filas) <= 1: continue 
         
-        headers = filas[0]
+        # Buscar la fila de encabezados dinámicamente
+        header_idx = 0
+        for idx, row in enumerate(filas[:10]): # Buscar en las primeras 10 filas
+            if not row: continue
+            row_str = [str(cell).lower().strip() if cell else "" for cell in row]
+            # Si encontramos palabras clave, esta es la fila de encabezados
+            if any(any(k in s for s in row_str) for k in ['nombre', 'cedula', 'edad', 'sexo', 'diagnostico']):
+                header_idx = idx
+                break
+        
+        headers = filas[header_idx]
         cmap = get_column_map(headers)
-        datos = filas[1:]
+        datos = filas[header_idx + 1:]
         
         tipo_actual = tipo
         if tipo == 'consolidado':

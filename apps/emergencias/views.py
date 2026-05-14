@@ -27,7 +27,8 @@ def lista_emergencias_view(request):
     if query:
         registros = registros.filter(
             Q(nombre_apellido__icontains=query) |
-            Q(cedula__icontains=query)
+            Q(cedula__icontains=query) |
+            Q(medico__icontains=query)
         )
 
     # Filtros adicionales
@@ -141,7 +142,8 @@ def lista_morbilidad_especialistas_view(request):
     if query:
         registros = registros.filter(
             Q(nombre_apellido__icontains=query) |
-            Q(especialidad__icontains=query)
+            Q(especialidad__icontains=query) |
+            Q(especialista__icontains=query)
         )
 
     paginator = Paginator(registros, 15)
