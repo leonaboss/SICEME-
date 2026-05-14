@@ -127,14 +127,27 @@ LOGIN_URL = '/usuarios/login/'
 LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/usuarios/login/'
 
+# ─────────────────────────────────────────────────────────────
+# VERIFICACIÓN POR EMAIL (OTP)
+# ─────────────────────────────────────────────────────────────
+# REQUIRE_EMAIL_VERIFICATION = True  → Exige OTP por correo (ideal para nube/internet)
+# REQUIRE_EMAIL_VERIFICATION = False → Auto-verifica las cuentas (ideal para uso local sin internet)
+#
+# Para cambiar: edita el .env y agrega:
+#   REQUIRE_EMAIL_VERIFICATION=True   (producción en la nube)
+#   REQUIRE_EMAIL_VERIFICATION=False  (instalación local sin internet)
+# ─────────────────────────────────────────────────────────────
+_env_verify = os.getenv('REQUIRE_EMAIL_VERIFICATION', 'True').strip().lower()
+REQUIRE_EMAIL_VERIFICATION = _env_verify not in ('false', '0', 'no')
+
 # Email configuration - Correo institucional del sistema SICEME
 EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend')
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'unefmsiceme@gmail.com'
-EMAIL_HOST_PASSWORD = 'hlvkmtpqhmglcvmm'
-DEFAULT_FROM_EMAIL = 'unefmsiceme@gmail.com'
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'unefmsiceme@gmail.com')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'hlvkmtpqhmglcvmm')
+DEFAULT_FROM_EMAIL = os.getenv('EMAIL_HOST_USER', 'unefmsiceme@gmail.com')
 
 # Security Settings
 SESSION_COOKIE_HTTPONLY = True

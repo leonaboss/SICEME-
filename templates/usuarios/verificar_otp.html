@@ -1,48 +1,94 @@
 {% extends 'base_auth.html' %}
 
-{% block title %}Verificación 2FA{% endblock %}
+{% block title %}Verificación de Cuenta — SICEME{% endblock %}
 
 {% block content %}
 <div class="text-center mb-4">
     <div
-        style="width:60px;height:60px;border-radius:50%;background:var(--primary-bg);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">
-        <i class="bi bi-shield-lock-fill" style="font-size:1.8rem;color:var(--primary);"></i>
+        style="width:64px;height:64px;border-radius:50%;background:var(--primary-bg);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;box-shadow:0 4px 16px rgba(var(--primary-rgb,74,20,140),0.15);">
+        <i class="bi bi-shield-lock-fill" style="font-size:2rem;color:var(--primary);"></i>
     </div>
     <h3 class="fw-bold" style="color: var(--primary);">
         {% if reset_mode %}
-        Recuperar Acceso
+            Recuperar Acceso
         {% else %}
-        Verificación 2FA
+            Verificación de Cuenta
         {% endif %}
     </h3>
-    <p class="text-muted extra-small">
-        {% if reset_mode %}
-        Ingresa el código enviado para resetear tu clave.
-        {% else %}
-        Se envió un código a tu correo.
+    <p class="text-muted" style="font-size:0.9rem;">
+        {% if username %}
+            Correo destino: <strong>{{ username }}</strong>
         {% endif %}
     </p>
 </div>
 
+{# ── Mensajes del sistema (éxito, advertencia, error) ── #}
+{% if messages %}
+<div class="mb-3">
+    {% for message in messages %}
+    <div class="alert-siceme {{ message.tags }}"
+         style="margin-bottom:10px; font-size:0.88rem; line-height:1.5;">
+        <i class="bi
+            {% if message.tags == 'error' %}bi-x-circle-fill
+            {% elif message.tags == 'success' %}bi-check-circle-fill
+            {% elif message.tags == 'warning' %}bi-exclamation-triangle-fill
+            {% else %}bi-info-circle-fill{% endif %}"></i>
+        {{ message|safe }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
 <form method="post" class="login-form" autocomplete="off">
     {% csrf_token %}
     <div class="mb-4">
-        <label for="id_otp_code" class="form-label fw-semibold">Código de Verificación</label>
+        <label for="id_otp_code" class="form-label fw-semibold">
+            <i class="bi bi-key-fill"></i> Código de Verificación (6 dígitos)
+        </label>
         {{ form.otp_code }}
+        {% if form.otp_code.errors %}
+        <div class="text-danger" style="font-size:0.83rem; margin-top:6px;">
+            {% for error in form.otp_code.errors %}
+                <i class="bi bi-exclamation-circle"></i> {{ error }}
+            {% endfor %}
+        </div>
+        {% endif %}
+        <div class="text-muted mt-2" style="font-size:0.8rem;">
+            <i class="bi bi-clock"></i>
+            El código expira en pocos minutos. Si no llega, usa el botón de abajo.
+        </div>
     </div>
+
     <button type="submit" class="btn-login">
-        <i class="bi bi-check-circle-fill"></i> Verificar Cuenta
+        <i class="bi bi-check-circle-fill"></i>
+        {% if reset_mode %}Confirmar y Restablecer{% else %}Activar Cuenta{% endif %}
     </button>
 </form>
 
+{# ── Botón Reenviar OTP (prominente) ── #}
+{% if not reset_mode %}
+<div class="mt-3 p-3 text-center"
+     style="border:1px dashed var(--border, #ddd); border-radius:10px; background:var(--primary-bg, #f3e5f5);">
+    <p class="mb-2" style="font-size:0.85rem; color:var(--text-muted);">
+        ¿No recibiste el código o el correo falló?
+    </p>
+    <a href="{% url 'reenviar_otp' %}"
+       class="btn btn-sm fw-semibold"
+       style="background:var(--primary);color:#fff;border-radius:8px;padding:6px 20px;text-decoration:none;">
+        <i class="bi bi-arrow-repeat"></i> Reenviar código ahora
+    </a>
+</div>
+{% else %}
 <div class="text-center mt-3">
     <a href="{% url 'reenviar_otp' %}" class="text-decoration-none small" style="color:var(--primary);">
         <i class="bi bi-arrow-repeat"></i> Reenviar código
     </a>
 </div>
-<div class="text-center mt-2">
+{% endif %}
+
+<div class="text-center mt-3">
     <a href="{% url 'login' %}" class="text-decoration-none text-muted small">
-        <i class="bi bi-arrow-left"></i> Volver al login
+        <i class="bi bi-arrow-left"></i> Volver al inicio de sesión
     </a>
 </div>
 {% endblock %}

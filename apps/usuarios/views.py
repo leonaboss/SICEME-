@@ -98,7 +98,7 @@ def login_view(request):
 
 
 def registro_publico_view(request):
-    """Vista de registro público con verificación 2FA inmediata"""
+    """Vista de registro público con verificación 2FA obligatoria"""
     if request.user.is_authenticated:
         return redirect('dashboard')
 
@@ -106,12 +106,20 @@ def registro_publico_view(request):
         form = RegistroUsuarioForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
-            # El rol ya fue validado en el formulario (con el código secreto si es ADMIN)
-            user.is_verified = False # Obligatorio verificar por OTP
+            user.is_verified = False  # Siempre obligatorio verificar
             user.save()
-            
-            # Generar y enviar OTP inmediatamente
+
+            # Generar OTP y guardar sesión
             otp_code = user.generar_otp()
+            request.session['pre_otp_user_id'] = user.pk
+            request.session['pre_otp_username'] = user.username
+
+            BitacoraAuditoria.registrar(
+                user, BitacoraAuditoria.Accion.CREAR,
+                f'Registro: {user.username}. Pendiente verificación OTP.', request, 'usuarios'
+            )
+
+            # Intentar enviar el correo
             try:
                 send_mail(
                     'SICEME - Código de Verificación',
@@ -123,23 +131,25 @@ def registro_publico_view(request):
                     fail_silently=False,
                 )
                 logger.info(f'OTP enviado a {user.email} para el usuario {user.username}')
-                BitacoraAuditoria.registrar(
-                    user, BitacoraAuditoria.Accion.CREAR,
-                    f'Registro: {user.username}. OTP enviado.', request, 'usuarios'
+                messages.success(
+                    request,
+                    f'✅ Código de verificación enviado a <strong>{user.email}</strong>.'
                 )
-                request.session['pre_otp_user_id'] = user.pk
-                request.session['pre_otp_username'] = user.username
-                messages.success(request, f'Código de verificación enviado a {user.email}.')
-                return redirect('verificar_otp')
             except Exception as e:
-                logger.error(f'Error crítico enviando email a {user.email}: {e}')
-                messages.warning(request, 'Cuenta creada, pero no pudimos enviarte el código. Por favor, solicita un reenvío o contacta al administrador.')
-                return redirect('login')
+                # Si el email falla por red, el usuario igual va a la pantalla de verificación
+                # para que pueda intentar "Reenviar" cuando la conexión se estabilice.
+                logger.error(f'Error enviando email OTP: {e}')
+                messages.warning(
+                    request,
+                    f'⚠️ Cuenta creada, pero hubo un problema de conexión al enviar el correo a '
+                    f'<strong>{user.email}</strong>. Por favor, intenta "Reenviar código".'
+                )
+
+            return redirect('verificar_otp')
     else:
         form = RegistroUsuarioForm()
-    
-    return render(request, 'usuarios/registro_publico.html', {'form': form})
 
+    return render(request, 'usuarios/registro_publico.html', {'form': form})
 
 def verificar_otp_view(request):
     """Vista para verificar código OTP tras el registro"""
@@ -193,20 +203,41 @@ def reenviar_otp_view(request):
 
     try:
         usuario = Usuario.objects.get(pk=user_id)
-        otp_code = usuario.generar_otp()
+    except Usuario.DoesNotExist:
+        messages.error(request, 'Sesión inválida. Por favor, inicia el registro nuevamente.')
+        return redirect('registro_publico')
+
+    # Generar nuevo OTP antes del intento de envío
+    otp_code = usuario.generar_otp()
+    logger.info(f'OTP regenerado para {usuario.username}')
+
+    try:
         send_mail(
             'SICEME - Nuevo Código de Verificación',
-            f'Su nuevo código de verificación es: {otp_code}\n\n'
-            f'Este código expira en {settings.OTP_EXPIRY_MINUTES} minutos.',
+            f'Hola {usuario.username},\n\n'
+            f'Tu nuevo código de verificación es: {otp_code}\n'
+            f'Este código expira en {settings.OTP_EXPIRY_MINUTES} minutos.\n\n'
+            f'Si no solicitaste este código, ignora este mensaje.',
             settings.DEFAULT_FROM_EMAIL,
             [usuario.email],
-            fail_silently=True,
+            fail_silently=False,  # No silenciar: necesitamos saber si falla
         )
-        logger.info(f'OTP reenviado para {usuario.username}: {otp_code}')
-        messages.success(request, 'Se ha enviado un nuevo código de verificación.')
+        logger.info(f'OTP reenviado exitosamente a {usuario.email}')
+        messages.success(
+            request,
+            f'✅ Nuevo código enviado a <strong>{usuario.email}</strong>. '
+            f'Revisa también tu carpeta de spam.'
+        )
     except Exception as e:
-        logger.error(f'Error reenviando OTP: {e}')
-        messages.error(request, 'Error al reenviar el código.')
+        error_detalle = str(e)
+        logger.error(f'Error reenviando OTP a {usuario.email}: {error_detalle}')
+        # Mostrar el error específico para que el administrador pueda diagnosticar
+        messages.error(
+            request,
+            f'❌ No se pudo enviar el correo a <strong>{usuario.email}</strong>. '
+            f'Error: {error_detalle[:120]}. '
+            f'Contacta al administrador del sistema para que active tu cuenta manualmente.'
+        )
 
     return redirect('verificar_otp')
 
@@ -236,6 +267,37 @@ def toggle_estado_usuario_view(request, pk):
         )
         messages.success(request, f'La cuenta de "{usuario.username}" ha sido {estado_texto}.')
         
+    return redirect('lista_usuarios')
+
+
+# ─────────────────────────────────────────────
+# VERIFICACIÓN MANUAL (Admin → usuario sin email)
+# ─────────────────────────────────────────────
+@login_required
+@rol_requerido('ADMIN')
+def verificar_cuenta_manual_view(request, pk):
+    """Permite al Admin verificar manualmente una cuenta (cuando el email falló)"""
+    usuario = get_object_or_404(Usuario, pk=pk)
+
+    if request.method == 'POST':
+        if usuario.is_verified:
+            messages.info(request, f'La cuenta de "{usuario.username}" ya estaba verificada.')
+        else:
+            usuario.is_verified = True
+            # Limpiar OTP pendiente
+            usuario.otp_code = None
+            usuario.otp_expiry = None
+            usuario.save(update_fields=['is_verified', 'otp_code', 'otp_expiry'])
+            BitacoraAuditoria.registrar(
+                request.user, BitacoraAuditoria.Accion.VERIFICACION_2FA,
+                f'Verificación manual por Admin: {usuario.username}', request, 'usuarios'
+            )
+            messages.success(
+                request,
+                f'✅ Cuenta de "{usuario.username}" verificada manualmente. '
+                f'El usuario ya puede iniciar sesión.'
+            )
+
     return redirect('lista_usuarios')
 
 
@@ -543,50 +605,48 @@ def bitacora_view(request):
 # ─────────────────────────────────────────────
 
 def password_reset_request_view(request):
-    """Paso 1: Solicitar reset y enviar OTP"""
+    """Paso 1: Solicitar reset de contraseña (siempre exige OTP)"""
     if request.method == 'POST':
         form = RecuperarPasswordForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data['email']
+            user = Usuario.objects.filter(email=email).first()
+
+            if not user:
+                # No revelar si existe el correo por seguridad
+                messages.info(request, 'Si el correo está registrado, recibirás un código.')
+                return redirect('login')
+
+            # ── Enviar OTP al correo obligatoriamente ──
             try:
-                # Usamos filter().first() por si hay correos duplicados accidentalmente
-                user = Usuario.objects.filter(email=email).first()
-                
-                if user:
-                    otp_code = user.generar_otp()
-                    
-                    # Asegurar un remitente válido para Gmail
-                    remitente = settings.DEFAULT_FROM_EMAIL
-                    if 'noreply@siceme.com' in remitente or not remitente:
-                        remitente = settings.EMAIL_HOST_USER
-                    
-                    send_mail(
-                        'SICEME - Código de Recuperación',
-                        f'Has solicitado restablecer tu contraseña.\n'
-                        f'Tu código de verificación es: {otp_code}\n'
-                        f'Este código expira en {settings.OTP_EXPIRY_MINUTES} minutos.',
-                        remitente,
-                        [email],
-                        fail_silently=False,
-                    )
-                    
-                    request.session['reset_otp_user_id'] = user.pk
-                    messages.info(request, f'Se ha enviado un código a {email}.')
-                    return redirect('password_reset_otp')
-                else:
-                    # El correo no existe en la base de datos
-                    messages.info(request, 'Si el correo está registrado, recibirás un código.')
-                    return redirect('login')
-                    
+                otp_code = user.generar_otp()
+                remitente = settings.DEFAULT_FROM_EMAIL or settings.EMAIL_HOST_USER
+
+                send_mail(
+                    'SICEME - Código de Recuperación',
+                    f'Has solicitado restablecer tu contraseña.\n'
+                    f'Tu código de verificación es: {otp_code}\n'
+                    f'Este código expira en {settings.OTP_EXPIRY_MINUTES} minutos.',
+                    remitente,
+                    [email],
+                    fail_silently=False,
+                )
+                request.session['reset_otp_user_id'] = user.pk
+                messages.info(request, f'✅ Se ha enviado un código a <strong>{email}</strong>.')
+                return redirect('password_reset_otp')
+
             except Exception as e:
-                # Logueamos el error exacto para que el usuario pueda verlo en consola
-                logger.error(f'Error detallado enviando email de reset: {e}')
-                print(f"DEBUG ERROR SMTP: {e}") # Para que lo vea en la terminal negra
-                messages.error(request, f'Error al enviar el código: {str(e)[:50]}...')
+                logger.error(f'Error enviando email de reset: {e}')
+                messages.error(
+                    request,
+                    f'❌ Error de conexión al enviar el correo. Por favor, intenta de nuevo.'
+                )
     else:
         form = RecuperarPasswordForm()
-    
+
     return render(request, 'usuarios/password_reset.html', {'form': form})
+
+
 
 
 def password_reset_otp_view(request):

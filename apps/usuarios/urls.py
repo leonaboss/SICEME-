@@ -19,6 +19,7 @@ urlpatterns = [
     path('desbloquear/<int:pk>/', views.desbloquear_usuario_view, name='desbloquear_usuario'),
     path('estado/<int:pk>/', views.toggle_estado_usuario_view, name='toggle_estado_usuario'),
     path('promover/<int:pk>/', views.promover_admin_usuario_view, name='promover_admin_usuario'),
+    path('verificar-manual/<int:pk>/', views.verificar_cuenta_manual_view, name='verificar_cuenta_manual'),
 
     # Perfil y contraseña
     path('perfil/', views.perfil_view, name='perfil'),
