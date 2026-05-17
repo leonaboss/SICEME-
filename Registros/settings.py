@@ -196,7 +196,7 @@ LOGGING = {
         'file': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
-            'filename': BASE_DIR / 'logs' / 'siceme.log',
+            'filename': str(BASE_DIR / 'logs' / 'siceme.log'),
             'formatter': 'verbose',
         },
         'console': {
