@@ -13,7 +13,7 @@ load_dotenv(BASE_DIR / '.env')
 # Security
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-change-me')
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '192.168.1.243',  '.pythonanywhere.com']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '192.168.1.243', '.pythonanywhere.com', '.onrender.com', '.alwaysdata.net']
 
 # Application definition
 INSTALLED_APPS = [
@@ -170,6 +170,8 @@ if not DEBUG:
     CSRF_TRUSTED_ORIGINS = [
         'https://*.siceme.com', # Cambia siceme.com por tu dominio real
         'https://*.pythonanywhere.com', # Para PythonAnywhere
+        'https://*.onrender.com', # Para Render
+        'https://*.alwaysdata.net', # Para Alwaysdata
     ]
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
