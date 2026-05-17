@@ -3,7 +3,7 @@
  * Dashboard, Chart.js, html2canvas, Sidebar, Interactividad
  */
 // No registramos globalmente para evitar conflictos, lo haremos por instancia
-console.log("SICEME: main.js cargado v1.3");
+console.log("SICEME: main.js cargado v1.6 - autoSkip desactivado");
 if (typeof ChartDataLabels === 'undefined') {
     console.error("SICEME Error: ChartDataLabels no está cargado. Verifique la conexión a internet o el CDN.");
 } else {
@@ -175,7 +175,7 @@ function initDashboardCharts() {
                         labels: data.por_especialidad.labels,
                         datasets: [{
                             data: data.por_especialidad.data,
-                            backgroundColor: colors.slice(0, data.por_especialidad.labels.length),
+                            backgroundColor: data.por_especialidad.labels.map((_, i) => colors[i % colors.length]),
                             borderRadius: 6,
                             maxBarThickness: 50,
                         }]
@@ -207,7 +207,8 @@ function initDashboardCharts() {
                             },
                             x: {
                                 ticks: {
-                                    font: { size: 10 },
+                                    autoSkip: false,
+                                    font: { size: 9 },
                                     color: '#4B5563',
                                     maxRotation: 45,
                                     minRotation: 45
@@ -332,7 +333,13 @@ function initDashboardCharts() {
                                 grid: { color: '#F3F4F6' }
                             },
                             x: {
-                                ticks: { font: { size: 10 }, color: '#9CA3AF' },
+                                ticks: {
+                                    autoSkip: false,
+                                    font: { size: 9 },
+                                    color: '#9CA3AF',
+                                    maxRotation: 45,
+                                    minRotation: 45
+                                },
                                 grid: { display: false }
                             }
                         }
@@ -409,7 +416,7 @@ function initDashboardCharts() {
                         labels: data.eco_por_tipo.labels,
                         datasets: [{
                             data: data.eco_por_tipo.data,
-                            backgroundColor: ecoColors.slice(0, data.eco_por_tipo.labels.length),
+                            backgroundColor: data.eco_por_tipo.labels.map((_, i) => ecoColors[i % ecoColors.length]),
                             borderRadius: 6, maxBarThickness: 50,
                         }]
                     },
@@ -428,7 +435,7 @@ function initDashboardCharts() {
                         },
                         scales: {
                             y: { beginAtZero: true, grace: '15%', ticks: { font: { size: 11 }, color: '#9CA3AF' }, grid: { color: '#F3F4F6', borderDash: [5, 5] } },
-                            x: { ticks: { font: { size: 10 }, color: '#4B5563', maxRotation: 45, minRotation: 45 }, grid: { display: false } }
+                            x: { ticks: { autoSkip: false, font: { size: 9 }, color: '#4B5563', maxRotation: 45, minRotation: 45 }, grid: { display: false } }
                         }
                     }
                 });
