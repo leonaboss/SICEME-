@@ -169,7 +169,6 @@ if not DEBUG:
     # Requerido para que el CSRF funcione en dominios HTTPS
     CSRF_TRUSTED_ORIGINS = [
         'https://*.siceme.com', # Cambia siceme.com por tu dominio real
-        'https://*.herokuapp.com', # Por si usas Heroku
         'https://*.pythonanywhere.com', # Para PythonAnywhere
     ]
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
