@@ -1,0 +1,583 @@
+{% extends 'base.html' %}
+{% block title %}SICEME - Mi Perfil{% endblock %}
+{% block page_title %}Mi Perfil{% endblock %}
+{% block page_subtitle %}Gestiona tu información personal{% endblock %}
+
+{% block extra_css %}
+<style>
+    .profile-container {
+        display: grid;
+        grid-template-columns: 340px 1fr;
+        gap: 24px;
+        animation: fadeUp 0.5s ease;
+    }
+
+    @keyframes fadeUp {
+        from {
+            transform: translateY(20px);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    /* ── Profile Sidebar Card ── */
+    .profile-sidebar {
+        background: var(--bg-card);
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+    }
+
+    .profile-sidebar-header {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+        padding: 40px 24px 48px;
+        text-align: center;
+        position: relative;
+    }
+
+    .profile-sidebar-header::after {
+        content: '';
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        right: 0;
+        height: 24px;
+        background: var(--bg-card);
+        border-radius: 24px 24px 0 0;
+    }
+
+    .profile-avatar-lg {
+        width: 110px;
+        height: 110px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 2.8rem;
+        margin: 0 auto 16px;
+        border: 4px solid rgba(255, 255, 255, 0.4);
+        letter-spacing: -0.02em;
+        text-transform: uppercase;
+        position: relative;
+        overflow: hidden;
+        transition: var(--transition);
+        cursor: pointer;
+    }
+
+    .profile-avatar-lg img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .profile-avatar-lg:hover {
+        border-color: white;
+        transform: scale(1.02);
+    }
+
+    .avatar-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        color: white;
+        font-size: 1.2rem;
+    }
+
+    .profile-avatar-lg:hover .avatar-overlay {
+        opacity: 1;
+    }
+
+    #id_imagen_perfil {
+        display: none;
+    }
+
+    .btn-delete-photo,
+    .btn-select-photo,
+    .btn-dashboard {
+        background: rgba(220, 38, 38, 0.1);
+        color: #dc2626;
+        border: 1px solid rgba(220, 38, 38, 0.2);
+        padding: 8px 16px;
+        border-radius: var(--radius-sm);
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+        margin-top: 12px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        justify-content: center;
+        text-decoration: none;
+    }
+
+    .btn-select-photo {
+        background: rgba(91, 33, 182, 0.1);
+        color: var(--primary);
+        border-color: rgba(91, 33, 182, 0.2);
+        margin-top: 16px;
+    }
+
+    .btn-delete-photo:hover {
+        background: #dc2626;
+        color: white;
+    }
+
+    .btn-select-photo:hover {
+        background: var(--primary);
+        color: white;
+    }
+
+    .btn-dashboard {
+        background: rgba(255, 255, 255, 0.15);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        margin-top: 8px;
+    }
+
+    .btn-dashboard:hover {
+        background: rgba(255, 255, 255, 0.25);
+        color: white;
+    }
+
+
+
+    .profile-sidebar-header .profile-name {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: white;
+        margin-bottom: 4px;
+    }
+
+    .profile-sidebar-header .profile-username {
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.75);
+        font-weight: 400;
+        margin-bottom: 8px;
+    }
+
+    .photo-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 0 24px;
+    }
+
+    .profile-sidebar-body {
+        padding: 20px 24px 24px;
+    }
+
+    .profile-info-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .profile-info-item:last-child {
+        border-bottom: none;
+    }
+
+    .profile-info-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: var(--radius-sm);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        flex-shrink: 0;
+    }
+
+    .profile-info-icon.purple {
+        background: var(--primary-bg);
+        color: var(--primary);
+    }
+
+    .profile-info-icon.blue {
+        background: var(--info-light);
+        color: var(--info);
+    }
+
+    .profile-info-icon.green {
+        background: var(--accent-light);
+        color: var(--accent);
+    }
+
+    .profile-info-icon.amber {
+        background: var(--warning-light);
+        color: var(--warning);
+    }
+
+    .profile-info-text {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .profile-info-text small {
+        display: block;
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+    }
+
+    .profile-info-text span {
+        font-size: 0.9rem;
+        color: var(--text-primary);
+        font-weight: 500;
+    }
+
+    /* ── Edit Form Card ── */
+    .profile-edit-card {
+        background: var(--bg-card);
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow-sm);
+        padding: 32px;
+    }
+
+    .profile-edit-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 28px;
+        padding-bottom: 16px;
+        border-bottom: 2px solid var(--primary-bg);
+    }
+
+    .profile-edit-header i {
+        font-size: 1.4rem;
+        color: var(--primary);
+    }
+
+    .profile-edit-header h2 {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0;
+        border: none;
+        padding: 0;
+    }
+
+    .profile-edit-header p {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        margin: 2px 0 0 0;
+    }
+
+    .profile-form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .profile-form-grid .full-width {
+        grid-column: 1 / -1;
+    }
+
+    .field-group {
+        position: relative;
+    }
+
+    .field-group label {
+        display: block;
+        font-weight: 600;
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        margin-bottom: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    .field-group .field-icon {
+        position: absolute;
+        left: 14px;
+        bottom: 12px;
+        color: var(--text-muted);
+        font-size: 1rem;
+        pointer-events: none;
+    }
+
+    .field-group .form-control {
+        padding-left: 42px;
+    }
+
+    .profile-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-top: 32px;
+        padding-top: 20px;
+        border-top: 1px solid var(--border-color);
+    }
+
+    .profile-actions .btn-save {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+        color: white;
+        border: none;
+        padding: 12px 32px;
+        border-radius: var(--radius-sm);
+        font-weight: 700;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: var(--transition);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .profile-actions .btn-save:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(91, 33, 182, 0.35);
+    }
+
+    .profile-actions .btn-change-pw {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: var(--transition);
+    }
+
+    .profile-actions .btn-change-pw:hover {
+        color: var(--primary-dark);
+    }
+
+    /* Error styling */
+    .field-error {
+        color: var(--danger);
+        font-size: 0.8rem;
+        margin-top: 4px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .field-error i {
+        font-size: 0.75rem;
+    }
+
+    .form-control.is-invalid {
+        border-color: var(--danger);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 992px) {
+        .profile-container {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <!-- Sidebar con info del usuario -->
+    <div class="profile-sidebar">
+        <div class="profile-sidebar-header">
+            <label for="id_imagen_perfil" class="profile-avatar-lg" title="Cambiar imagen">
+                {% if user.imagen_perfil %}
+                <img src="{{ user.imagen_perfil.url }}" alt="{{ user.username }}">
+                {% else %}
+                {{ user.first_name|default:user.username|truncatechars:1 }}
+                {% endif %}
+                <div class="avatar-overlay">
+                    <i class="bi bi-camera-fill"></i>
+                </div>
+            </label>
+            <div class="profile-name">{{ user.get_full_name|default:user.username }}</div>
+            <div class="profile-username">@{{ user.username }}</div>
+
+            <div class="photo-actions">
+                <button type="button" class="btn-select-photo"
+                    onclick="document.getElementById('id_imagen_perfil').click()">
+                    <i class="bi bi-camera-fill"></i> Seleccionar Foto
+                </button>
+
+                {% if user.imagen_perfil %}
+                <button type="button" class="btn-delete-photo" onclick="deletePhoto()">
+                    <i class="bi bi-trash3-fill"></i> Eliminar Foto
+                </button>
+                {% endif %}
+                
+                <a href="{% url 'dashboard' %}" class="btn-dashboard">
+                    <i class="bi bi-arrow-left-circle"></i> Volver al Panel
+                </a>
+            </div>
+        </div>
+
+
+        <div class="profile-sidebar-body">
+            <div class="profile-info-item">
+                <div class="profile-info-icon purple">
+                    <i class="bi bi-shield-check"></i>
+                </div>
+                <div class="profile-info-text">
+                    <small>Rol</small>
+                    <span><span class="badge-role {{ user.rol|lower }}">{{ user.get_rol_display }}</span></span>
+                </div>
+            </div>
+            <div class="profile-info-item">
+                <div class="profile-info-icon blue">
+                    <i class="bi bi-envelope-fill"></i>
+                </div>
+                <div class="profile-info-text">
+                    <small>Correo</small>
+                    <span>{{ user.email|default:"-" }}</span>
+                </div>
+            </div>
+            <div class="profile-info-item">
+                <div class="profile-info-icon green">
+                    <i class="bi bi-telephone-fill"></i>
+                </div>
+                <div class="profile-info-text">
+                    <small>Teléfono</small>
+                    <span>{{ user.telefono|default:"-" }}</span>
+                </div>
+            </div>
+            <div class="profile-info-item">
+                <div class="profile-info-icon amber">
+                    <i class="bi bi-calendar3"></i>
+                </div>
+                <div class="profile-info-text">
+                    <small>Miembro desde</small>
+                    <span>{{ user.date_joined|date:"d/m/Y" }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Formulario de edición -->
+    <div class="profile-edit-card">
+        <div class="profile-edit-header">
+            <div>
+                <h2><i class="bi bi-pencil-square"></i> Editar Información Personal</h2>
+                <p>Actualiza tus datos de contacto y personales</p>
+            </div>
+        </div>
+
+        <form method="post" id="profile-form" enctype="multipart/form-data">
+            {% csrf_token %}
+            <!-- Campo oculto manejado por el click en el avatar -->
+            <input type="file" name="imagen_perfil" id="id_imagen_perfil" accept="image/*"
+                onchange="previewImage(this)">
+            <input type="hidden" name="eliminar_foto" id="id_eliminar_foto" value="0">
+
+
+            <div class="profile-form-grid">
+                <!-- Nombre -->
+                <div class="field-group">
+                    <label for="id_first_name">Nombre</label>
+                    <i class="bi bi-person-fill field-icon"></i>
+                    <input type="text" name="first_name" id="id_first_name"
+                        class="form-control {% if form.first_name.errors %}is-invalid{% endif %}"
+                        value="{{ form.first_name.value|default_if_none:'' }}" placeholder="Tu nombre">
+                    {% if form.first_name.errors %}
+                    <div class="field-error"><i class="bi bi-exclamation-circle-fill"></i> {{ form.first_name.errors.0
+                        }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- Apellido -->
+                <div class="field-group">
+                    <label for="id_last_name">Apellido</label>
+                    <i class="bi bi-person-fill field-icon"></i>
+                    <input type="text" name="last_name" id="id_last_name"
+                        class="form-control {% if form.last_name.errors %}is-invalid{% endif %}"
+                        value="{{ form.last_name.value|default_if_none:'' }}" placeholder="Tu apellido">
+                    {% if form.last_name.errors %}
+                    <div class="field-error"><i class="bi bi-exclamation-circle-fill"></i> {{ form.last_name.errors.0 }}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Email -->
+                <div class="field-group">
+                    <label for="id_email">Correo Electrónico</label>
+                    <i class="bi bi-envelope-fill field-icon"></i>
+                    <input type="email" name="email" id="id_email"
+                        class="form-control {% if form.email.errors %}is-invalid{% endif %}"
+                        value="{{ form.email.value|default_if_none:'' }}" placeholder="correo@ejemplo.com">
+                    {% if form.email.errors %}
+                    <div class="field-error"><i class="bi bi-exclamation-circle-fill"></i> {{ form.email.errors.0 }}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Teléfono -->
+                <div class="field-group">
+                    <label for="id_telefono">Teléfono</label>
+                    <i class="bi bi-telephone-fill field-icon"></i>
+                    <input type="text" name="telefono" id="id_telefono"
+                        class="form-control {% if form.telefono.errors %}is-invalid{% endif %}"
+                        value="{{ form.telefono.value|default_if_none:'' }}" placeholder="+58 4XX-XXXXXXX">
+                    {% if form.telefono.errors %}
+                    <div class="field-error"><i class="bi bi-exclamation-circle-fill"></i> {{ form.telefono.errors.0 }}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="profile-actions">
+                <a href="{% url 'cambiar_password' %}" class="btn-change-pw">
+                    <i class="bi bi-key-fill"></i> Cambiar Contraseña
+                </a>
+                <button type="submit" class="btn-save" id="btn-save-profile">
+                    <i class="bi bi-check2-circle"></i> Guardar Cambios
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function previewImage(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const avatar = document.querySelector('.profile-avatar-lg');
+                // Si ya hay una imagen, actualizar su src
+                const img = avatar.querySelector('img');
+                if (img) {
+                    img.src = e.target.result;
+                } else {
+                    // Si no hay imagen (se muestran iniciales), reemplazar texto por img
+                    const overlay = avatar.querySelector('.avatar-overlay');
+                    avatar.innerHTML = `<img src="${e.target.result}" alt="Preview"><div class="avatar-overlay"><i class="bi bi-camera-fill"></i></div>`;
+                }
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function deletePhoto() {
+        if (confirm('¿Estás seguro de que deseas eliminar tu foto de perfil?')) {
+            document.getElementById('id_eliminar_foto').value = '1';
+            document.getElementById('profile-form').submit();
+        }
+    }
+</script>
+
+{% endblock %}

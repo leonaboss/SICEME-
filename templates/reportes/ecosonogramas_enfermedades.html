@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block title %}SICEME - Sumatoria de Enfermedades Eco{% endblock %}
+{% block page_title %}Sumatoria de Enfermedades{% endblock %}
+{% block page_subtitle %}Ecosonogramas (Año {{ anio }}){% endblock %}
+{% block content %}
+<div class="filters-bar">
+    <form method="get" class="d-flex gap-2 align-items-end">
+        <div>
+            <label class="form-label small fw-semibold">Año</label>
+            <input type="number" name="anio" value="{{ anio }}" class="form-control" style="width:120px;">
+        </div>
+        <button type="submit" class="btn-siceme btn-sm"><i class="bi bi-funnel"></i> Filtrar</button>
+        <a href="{% url 'exportar_excel' %}?tipo=ecosonogramas&anio={{ anio }}" class="btn-siceme-outline btn-sm"><i
+                class="bi bi-file-earmark-excel"></i> Excel Ecos</a>
+        <button type="button" onclick="descargarReporteImagen('reporte-contenido', 'enfermedades_eco_{{ anio }}.png')" class="btn-siceme-outline btn-sm">
+            <i class="bi bi-download"></i> Descargar Imagen
+        </button>
+    </form>
+</div>
+<div id="reporte-contenido">
+<div class="table-card">
+    <div class="table-card-header">
+        <h5 class="mb-0 text-muted"><i class="bi bi-bar-chart-fill" style="color:#14B8A6"></i> Frecuencia de Diagnósticos</h5>
+    </div>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>N°</th>
+                    <th>Diagnóstico (Enfermedad)</th>
+                    <th>Total Casos</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for e in enfermedades %}
+                    {% if e.diagnostico %}
+                    <tr>
+                        <td style="width: 60px;"><strong>{{ forloop.counter }}</strong></td>
+                        <td>{{ e.diagnostico|title }}</td>
+                        <td style="width: 150px;"><span class="badge" style="background-color: #0f766e; font-size: 0.9rem;">{{ e.total }}</span></td>
+                    </tr>
+                    {% endif %}
+                {% empty %}
+                <tr>
+                    <td colspan="3" class="text-center text-muted py-4">Sin datos registrados en {{ anio }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+</div>
+{% block extra_js %}
+<script>
+function descargarReporteImagen(elementId, filename) {
+    const el = document.getElementById(elementId);
+    html2canvas(el, { scale: 2, useCORS: true }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = filename;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    });
+}
+</script>
+{% endblock %}

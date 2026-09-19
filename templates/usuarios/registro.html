@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% block title %}SICEME - Registro de Usuario{% endblock %}
+{% block page_title %}Nuevo Usuario{% endblock %}
+{% block content %}
+<div class="form-card">
+    <h2><i class="bi bi-person-plus-fill" style="color:var(--primary)"></i> Registrar Nuevo Usuario</h2>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-6 form-group">
+                <label for="registro-username">Usuario</label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                <div class="text-danger small mt-1">{{ form.username.errors.0 }}</div>
+                {% endif %}
+            </div>
+            <div class="col-md-6 form-group">
+                <label for="registro-email">Correo electrónico</label>
+                {{ form.email }}
+                {% if form.email.errors %}<div class="text-danger small mt-1">{{ form.email.errors.0 }}</div>{% endif %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 form-group">
+                <label for="registro-nombre">Nombre</label>
+                {{ form.first_name }}
+            </div>
+            <div class="col-md-6 form-group">
+                <label for="registro-apellido">Apellido</label>
+                {{ form.last_name }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 form-group">
+                <label for="registro-telefono">Teléfono</label>
+                {{ form.telefono }}
+            </div>
+            <div class="col-md-6 form-group">
+                <label for="registro-rol">Rol</label>
+                {{ form.rol }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 form-group">
+                <label>Contraseña (mín. 16 caracteres)</label>
+                <div class="position-relative">
+                    {{ form.password1 }}
+                    <button type="button" id="toggle-password1" class="btn btn-link position-absolute end-0 top-50 translate-middle-y text-decoration-none" style="z-index:5; color: var(--text-muted); font-size: 1.1rem; padding-right: 12px; border: none; background: none;">
+                        <i class="bi bi-eye-slash" id="eye-password1"></i>
+                    </button>
+                </div>
+                {% if form.password1.errors %}
+                <div class="text-danger small mt-1">{{ form.password1.errors.0 }}</div>
+                {% endif %}
+            </div>
+            <div class="col-md-6 form-group">
+                <label>Confirmar Contraseña</label>
+                <div class="position-relative">
+                    {{ form.password2 }}
+                    <button type="button" id="toggle-password2" class="btn btn-link position-absolute end-0 top-50 translate-middle-y text-decoration-none" style="z-index:5; color: var(--text-muted); font-size: 1.1rem; padding-right: 12px; border: none; background: none;">
+                        <i class="bi bi-eye-slash" id="eye-password2"></i>
+                    </button>
+                </div>
+                {% if form.password2.errors %}
+                <div class="text-danger small mt-1">{{ form.password2.errors.0 }}</div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="d-flex gap-2 mt-3">
+            <button type="submit" class="btn-siceme"><i class="bi bi-check-circle"></i> Crear Usuario</button>
+            <a href="{% url 'lista_usuarios' %}" class="btn-siceme-outline">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    function setupToggle(btnId, inputId, iconId) {
+        const btn = document.getElementById(btnId);
+        const input = document.getElementById(inputId);
+        const icon = document.getElementById(iconId);
+        
+        if (btn && input && icon) {
+            btn.addEventListener('click', function() {
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.classList.replace('bi-eye-slash', 'bi-eye');
+                } else {
+                    input.type = 'password';
+                    icon.classList.replace('bi-eye', 'bi-eye-slash');
+                }
+            });
+        }
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        setupToggle('toggle-password1', 'registro-password1', 'eye-password1');
+        setupToggle('toggle-password2', 'registro-password2', 'eye-password2');
+    });
+</script>
+{% endblock %}

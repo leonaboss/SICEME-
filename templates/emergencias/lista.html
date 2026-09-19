@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+{% block title %}SICEME - Emergencias{% endblock %}
+{% block page_title %}Registro de Emergencias{% endblock %}
+{% block page_subtitle %}Morbilidad de Emergencia{% endblock %}
+{% block content %}
+<div class="table-card">
+    <div class="table-card-header">
+        <h3><i class="bi bi-heart-pulse-fill" style="color:var(--danger)"></i> Morbilidades de Emergencia</h3>
+        <div class="d-flex gap-2 flex-wrap">
+            <form method="get" class="search-box">
+                <i class="bi bi-search"></i>
+                <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="Buscar paciente..."
+                    style="width:220px;">
+            </form>
+            <div class="dropdown">
+                <button class="btn-siceme-outline btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                    <i class="bi bi-file-earmark-excel"></i> Excel
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modalImportar"><i
+                                class="bi bi-upload me-2"></i> Importar</a></li>
+                    <li><a class="dropdown-item" href="{% url 'exportar_excel' %}?tipo=emergencias"><i
+                                class="bi bi-download me-2"></i> Exportar</a></li>
+                </ul>
+            </div>
+            <a href="{% url 'crear_emergencia' %}" class="btn-siceme"><i class="bi bi-plus-circle"></i> Nuevo</a>
+            <button type="button" class="btn-siceme-outline btn-sm" data-bs-toggle="modal"
+                data-bs-target="#modalLimpiar" style="color: var(--warning); border-color: var(--warning);">
+                <i class="bi bi-archive"></i> Limpiar Todo
+            </button>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Cédula</th>
+                    <th>Nombre y Apellido</th>
+                    <th>Edad</th>
+                    <th>Sexo</th>
+                    <th>Dependencia</th>
+                    <th>Teléfono</th>
+                    <th>Código</th>
+                    <th>Médico</th>
+                    <th>Fecha</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for reg in registros %}
+                <tr>
+                    <td>{{ reg.cedula }}</td>
+                    <td><strong>{{ reg.nombre_apellido }}</strong></td>
+                    <td>{{ reg.edad }}</td>
+                    <td>{{ reg.get_sexo_display }}</td>
+                    <td>{{ reg.dependencia|default:"-" }}</td>
+                    <td>{{ reg.telefono|default:"-" }}</td>
+                    <td><span class="badge bg-light text-dark">{{ reg.codigo }}</span></td>
+                    <td>{{ reg.medico }}</td>
+                    <td>{{ reg.fecha_diagnostico|date:"d/m/Y" }}</td>
+                    <td>
+                        <div class="d-flex gap-1">
+                            <a href="{% url 'editar_emergencia' reg.pk %}" class="btn-info-sm"><i
+                                    class="bi bi-pencil"></i></a>
+                            <a href="{% url 'eliminar_emergencia' reg.pk %}" class="btn-danger-sm" title="Archivar"><i
+                                    class="bi bi-archive"></i></a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="9" class="empty-state"><i class="bi bi-inbox"></i>
+                        <h4>Sin registros</h4>
+                        <p>No hay morbilidades registradas</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% if registros.has_other_pages %}
+    <nav class="pagination-container">
+        <ul class="pagination">
+            {% if registros.has_previous %}<li class="page-item"><a class="page-link"
+                    href="?page={{ registros.previous_page_number }}&q={{ query }}">&laquo;</a></li>{% endif %}
+            {% for num in registros.paginator.page_range %}
+            <li class="page-item {% if registros.number == num %}active{% endif %}"><a class="page-link"
+                    href="?page={{ num }}&q={{ query }}">{{ num }}</a></li>
+            {% endfor %}
+            {% if registros.has_next %}<li class="page-item"><a class="page-link"
+                    href="?page={{ registros.next_page_number }}&q={{ query }}">&raquo;</a></li>{% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+
+<!-- Modal Importar Excel -->
+<div class="modal fade" id="modalImportar" tabindex="-1" aria-labelledby="modalImportarLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalImportarLabel"><i class="bi bi-file-earmark-excel"
+                        style="color:#4A148C"></i> Importar Datos de Emergencias</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{% url 'importar_excel' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <input type="hidden" name="tipo" value="emergencias">
+                    <p class="text-muted"><small>Formatos aceptados: .xlsx<br>Asegúrese de cargar un archivo con las
+                            mismas columnas que el formato exportado.</small></p>
+                    <div class="mb-3">
+                        <label for="archivo_excel" class="form-label">Archivo Excel</label>
+                        <input class="form-control" type="file" id="archivo_excel" name="archivo_excel" accept=".xlsx"
+                            required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-upload"></i> Subir y Procesar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Modal Limpiar -->
+<div class="modal fade" id="modalLimpiar" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-eraser" style="color:var(--warning)"></i> Limpiar Historial de Registros</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Está seguro de que desea <strong>limpiar todos</strong> los registros de emergencia visibles en esta tabla?</p>
+                <p class="text-muted"><small>Se limpiará el historial de la pantalla actual, pero los registros se mantendrán guardados (podrá verlos o restaurarlos desde la sección <strong>Movimientos</strong>).</small></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form method="post" action="{% url 'limpiar_emergencias' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-warning"><i class="bi bi-eraser"></i> Limpiar Todo</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

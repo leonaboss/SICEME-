@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}SICEME - Archivar Especialista{% endblock %}
+{% block page_title %}Archivar Especialista{% endblock %}
+{% block content %}
+<div class="delete-confirm mx-auto mt-4">
+    <div class="icon-danger" style="background-color: var(--warning);"><i class="bi bi-archive-fill"></i></div>
+    <h3 class="text-center mb-3">¿Archivar a "{{ especialista.nombre_completo }}"?</h3>
+    <form method="post">
+        {% csrf_token %}
+        <div class="d-flex gap-2 justify-content-center">
+            <button type="submit" class="btn-siceme" style="background-color: var(--warning); border-color: var(--warning); color: #000; padding:10px 24px;">
+    <i class="bi bi-archive"></i> Archivar</button>
+            <a href="{% url 'crud_especialistas' %}" class="btn-siceme-outline">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

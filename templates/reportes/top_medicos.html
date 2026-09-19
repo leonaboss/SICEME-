@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% block title %}SICEME - Médicos{% endblock %}
+{% block page_title %}Médicos{% endblock %}
+{% block page_subtitle %}Año {{ anio }}{% endblock %}
+{% block content %}
+<div class="filters-bar">
+    <form method="get" class="d-flex gap-2 align-items-end">
+        <div>
+            <label class="form-label small fw-semibold">Año</label>
+            <input type="number" name="anio" value="{{ anio }}" class="form-control" style="width:120px;">
+        </div>
+        <button type="submit" class="btn-siceme btn-sm"><i class="bi bi-funnel"></i> Filtrar</button>
+        <button type="button" onclick="descargarReporteImagen('reporte-contenido', 'medicos_{{ anio }}.png')" class="btn-siceme-outline btn-sm">
+            <i class="bi bi-download"></i> Descargar Imagen
+        </button>
+    </form>
+</div>
+<div id="reporte-contenido">
+<!-- Top Especialistas -->
+<div class="table-card mb-4">
+    <div class="table-card-header">
+        <h4 class="mb-0 text-primary"><i class="bi bi-person-badge-fill"></i> Top Especialistas</h4>
+    </div>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th style="width: 50px;">#</th>
+                    <th>Especialista</th>
+                    <th>Especialidad</th>
+                    <th>Total Pacientes</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for m in top_especialistas %}
+                <tr>
+                    <td>
+                        <span style="font-size:1.2rem;">
+                            {% if forloop.counter == 1 %}🥇{% endif %}
+                            {% if forloop.counter == 2 %}🥈{% endif %}
+                            {% if forloop.counter == 3 %}🥉{% endif %}
+                            {% if forloop.counter > 3 %}{{ forloop.counter }}{% endif %}
+                        </span>
+                    </td>
+                    <td><strong>{{ m.medico__nombre_completo }}</strong></td>
+                    <td>{{ m.especialidad__nombre }}</td>
+                    <td><span class="badge-status active">{{ m.total }}</span></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center text-muted py-4">Sin datos en especialistas</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Top Emergencias -->
+<div class="table-card">
+    <div class="table-card-header">
+        <h4 class="mb-0 text-danger"><i class="bi bi-heart-pulse-fill"></i> Médicos de Emergencias</h4>
+    </div>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th style="width: 50px;">#</th>
+                    <th>Médico</th>
+                    <th>Área</th>
+                    <th>Total Pacientes</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for m in top_emergencias %}
+                <tr>
+                    <td>
+                        <span style="font-size:1.2rem;">
+                            {% if forloop.counter == 1 %}🥇{% endif %}
+                            {% if forloop.counter == 2 %}🥈{% endif %}
+                            {% if forloop.counter == 3 %}🥉{% endif %}
+                            {% if forloop.counter > 3 %}{{ forloop.counter }}{% endif %}
+                        </span>
+                    </td>
+                    <td><strong>{{ m.medico__nombre_completo }}</strong></td>
+                    <td>{{ m.especialidad__nombre }}</td>
+                    <td><span class="badge-status active">{{ m.total }}</span></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center text-muted py-4">Sin datos en emergencias</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+function descargarReporteImagen(elementId, filename) {
+    const el = document.getElementById(elementId);
+    html2canvas(el, { scale: 2, useCORS: true }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = filename;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    });
+}
+</script>
+{% endblock %}
