@@ -8,7 +8,7 @@ services:
     env_file:
       - .env
     environment:
-      MYSQL_DATABASE: sgej_juridico
+      MYSQL_DATABASE: siceme
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       MYSQL_USER: ${DB_USER}
       MYSQL_PASSWORD: ${DB_PASSWORD}
@@ -16,8 +16,10 @@ services:
 
   web:
     build: .
-    # Se usa el comando definido en el Dockerfile, por lo que aquí podemos dejar el comando por defecto o sobrescribirlo.
-    # Para consistencia con la seguridad, preferimos la ejecución definida en el Dockerfile.
+    command: >
+      bash -c "python manage.py migrate &&
+               python manage.py collectstatic --noinput &&
+               gunicorn Registros.wsgi:application --bind 0.0.0.0:8000"
     volumes:
       - .:/app
     ports:
