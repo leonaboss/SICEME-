@@ -30,6 +30,8 @@ staticfiles/
 
 # Entorno y Secretos
 .env
+.env.save
+*.save
 .venv
 env/
 venv/
