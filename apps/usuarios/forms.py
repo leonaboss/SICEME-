@@ -99,22 +99,12 @@ class RegistroUsuarioForm(UserCreationForm):
             'id': 'registro-rol'
         })
     )
-    admin_code = forms.CharField(
-        label='Código de Validación Administrador',
-        required=False,
-        help_text='Solo si elige el rol de Administrador',
-        widget=forms.PasswordInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'Ingrese el código secreto',
-            'id': 'registro-admin-code'
-        })
-    )
 
     class Meta:
         model = Usuario
         fields = [
             'username', 'email', 'first_name', 'last_name',
-            'telefono', 'rol', 'admin_code', 'password1', 'password2'
+            'telefono', 'rol', 'password1', 'password2'
         ]
         widgets = {
             'username': forms.TextInput(attrs={
@@ -147,7 +137,6 @@ class RegistroUsuarioForm(UserCreationForm):
                 # El formato de choices es [('VALOR', 'Etiqueta'), ...]
                 new_choices = [c for c in choices if c[0] != Usuario.Rol.ADMIN]
                 self.fields['rol'].choices = new_choices
-                # Si el admin no existe, el campo admin_code será validado por clean()
         except Exception:
             # Por si la base de datos no está lista o no existe la tabla aún
             pass
@@ -160,15 +149,6 @@ class RegistroUsuarioForm(UserCreationForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        rol = cleaned_data.get('rol')
-        admin_code = cleaned_data.get('admin_code')
-
-        if rol == Usuario.Rol.ADMIN:
-            from django.conf import settings
-            secret_code = getattr(settings, 'ADMIN_REGISTRATION_CODE', 'SICEME_ADMIN_2024')
-            if admin_code != secret_code:
-                self.add_error('admin_code', 'Código de validación incorrecto para el rol de Administrador.')
-        
         return cleaned_data
 
 
