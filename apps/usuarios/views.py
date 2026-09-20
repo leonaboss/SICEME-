@@ -98,7 +98,7 @@ def login_view(request):
 
 
 def registro_publico_view(request):
-    """Vista de registro público inteligente (Local vs Producción)"""
+    """Vista de registro público - Creación automática y directa"""
     if request.user.is_authenticated:
         return redirect('dashboard')
 
@@ -106,40 +106,16 @@ def registro_publico_view(request):
         form = RegistroUsuarioForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
+            user.is_verified = True # Registro automático
+            user.save()
             
-            # --- FLUJO INTELIGENTE ---
-            if settings.REQUIRE_EMAIL_VERIFICATION:
-                user.is_verified = False
-                user.save()
-                # Generar OTP y guardar sesión
-                otp_code = user.generar_otp()
-                request.session['pre_otp_user_id'] = user.pk
-                request.session['pre_otp_username'] = user.username
-                # ... envío de correo ...
-                try:
-                    send_mail(
-                        'SICEME - Código de Verificación',
-                        f'Tu código: {otp_code}',
-                        settings.DEFAULT_FROM_EMAIL, [user.email], fail_silently=False,
-                    )
-                    messages.success(request, '✅ Código enviado a tu correo.')
-                except Exception as e:
-                    logger.error(f'Error OTP: {e}')
-                    messages.warning(request, '⚠️ Cuenta creada, revisa el envío de correo.')
-                return redirect('verificar_otp')
-            else:
-                # Flujo local automático
-                user.is_verified = True
-                user.save()
-                login(request, user)
-                BitacoraAuditoria.registrar(
-                    user, BitacoraAuditoria.Accion.CREAR,
-                    'Registro local automático', request, 'usuarios'
-                )
-                messages.success(request, f'¡Bienvenido, {user.username}!')
-                return redirect('dashboard')
-            # -------------------------
-
+            login(request, user)
+            BitacoraAuditoria.registrar(
+                user, BitacoraAuditoria.Accion.CREAR,
+                'Registro público directo', request, 'usuarios'
+            )
+            messages.success(request, f'¡Bienvenido, {user.username}!')
+            return redirect('dashboard')
     else:
         form = RegistroUsuarioForm()
 
@@ -341,26 +317,10 @@ def registro_view(request):
         form = AdminRegistroUsuarioForm(request.POST)
         if form.is_valid():
             usuario = form.save(commit=False)
-            usuario.is_verified = False # También requiere verificación para mayor seguridad
+            usuario.is_verified = True # Verificación automática
             usuario.save()
             
-            # Generar y enviar OTP al nuevo usuario
-            otp_code = usuario.generar_otp()
-            try:
-                send_mail(
-                    'SICEME - Código de Activación de Cuenta',
-                    f'Hola {usuario.username},\n\n'
-                    f'Un administrador ha creado tu cuenta en SICEME.\n'
-                    f'Tu código de activación es: {otp_code}\n'
-                    f'Usa este código para verificar tu cuenta al iniciar sesión.',
-                    settings.DEFAULT_FROM_EMAIL,
-                    [usuario.email],
-                    fail_silently=False,
-                )
-                messages.success(request, f'Usuario "{usuario.username}" creado. Se envió un código a {usuario.email}.')
-            except Exception as e:
-                logger.error(f'Error enviando email en registro admin: {e}')
-                messages.warning(request, f'Usuario creado, pero no se pudo enviar el correo a {usuario.email}.')
+            messages.success(request, f'Usuario "{usuario.username}" creado exitosamente.')
             
             BitacoraAuditoria.registrar(
                 request.user, BitacoraAuditoria.Accion.CREAR,
