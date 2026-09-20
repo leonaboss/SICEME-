@@ -130,17 +130,12 @@ LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/usuarios/login/'
 
 # ─────────────────────────────────────────────────────────────
-# VERIFICACIÓN POR EMAIL (OTP)
+# GESTIÓN DE FLUJOS (LOCAL VS PRODUCCIÓN)
 # ─────────────────────────────────────────────────────────────
-# REQUIRE_EMAIL_VERIFICATION = True  → Exige OTP por correo (ideal para nube/internet)
-# REQUIRE_EMAIL_VERIFICATION = False → Auto-verifica las cuentas (ideal para uso local sin internet)
-#
-# Para cambiar: edita el .env y agrega:
-#   REQUIRE_EMAIL_VERIFICATION=True   (producción en la nube)
-#   REQUIRE_EMAIL_VERIFICATION=False  (instalación local sin internet)
-# ─────────────────────────────────────────────────────────────
-_env_verify = os.getenv('REQUIRE_EMAIL_VERIFICATION', 'True').strip().lower()
-REQUIRE_EMAIL_VERIFICATION = _env_verify not in ('false', '0', 'no')
+# En desarrollo (DEBUG=True), saltamos el OTP para facilitar el uso.
+# En producción (DEBUG=False), exigimos el OTP.
+ENABLE_OTP = not DEBUG
+REQUIRE_EMAIL_VERIFICATION = ENABLE_OTP
 
 # Email configuration - Correo institucional del sistema SICEME
 EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend')

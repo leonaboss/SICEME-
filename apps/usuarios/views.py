@@ -98,7 +98,7 @@ def login_view(request):
 
 
 def registro_publico_view(request):
-    """Vista de registro público con verificación 2FA obligatoria"""
+    """Vista de registro público inteligente (Local vs Producción)"""
     if request.user.is_authenticated:
         return redirect('dashboard')
 
@@ -106,46 +106,40 @@ def registro_publico_view(request):
         form = RegistroUsuarioForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
-            user.is_verified = False  # Siempre obligatorio verificar
-            user.save()
-
-            # Generar OTP y guardar sesión
-            otp_code = user.generar_otp()
-            request.session['pre_otp_user_id'] = user.pk
-            request.session['pre_otp_username'] = user.username
-
-            BitacoraAuditoria.registrar(
-                user, BitacoraAuditoria.Accion.CREAR,
-                f'Registro: {user.username}. Pendiente verificación OTP.', request, 'usuarios'
-            )
-
-            # Intentar enviar el correo
-            try:
-                send_mail(
-                    'SICEME - Código de Verificación',
-                    f'Hola {user.username},\n\n'
-                    f'Tu código de verificación es: {otp_code}\n'
-                    f'Ingresa este código para activar tu cuenta. Expira en {settings.OTP_EXPIRY_MINUTES} minutos.',
-                    settings.DEFAULT_FROM_EMAIL,
-                    [user.email],
-                    fail_silently=False,
+            
+            # --- FLUJO INTELIGENTE ---
+            if settings.REQUIRE_EMAIL_VERIFICATION:
+                user.is_verified = False
+                user.save()
+                # Generar OTP y guardar sesión
+                otp_code = user.generar_otp()
+                request.session['pre_otp_user_id'] = user.pk
+                request.session['pre_otp_username'] = user.username
+                # ... envío de correo ...
+                try:
+                    send_mail(
+                        'SICEME - Código de Verificación',
+                        f'Tu código: {otp_code}',
+                        settings.DEFAULT_FROM_EMAIL, [user.email], fail_silently=False,
+                    )
+                    messages.success(request, '✅ Código enviado a tu correo.')
+                except Exception as e:
+                    logger.error(f'Error OTP: {e}')
+                    messages.warning(request, '⚠️ Cuenta creada, revisa el envío de correo.')
+                return redirect('verificar_otp')
+            else:
+                # Flujo local automático
+                user.is_verified = True
+                user.save()
+                login(request, user)
+                BitacoraAuditoria.registrar(
+                    user, BitacoraAuditoria.Accion.CREAR,
+                    'Registro local automático', request, 'usuarios'
                 )
-                logger.info(f'OTP enviado a {user.email} para el usuario {user.username}')
-                messages.success(
-                    request,
-                    f'✅ Código de verificación enviado a <strong>{user.email}</strong>.'
-                )
-            except Exception as e:
-                # Si el email falla por red, el usuario igual va a la pantalla de verificación
-                # para que pueda intentar "Reenviar" cuando la conexión se estabilice.
-                logger.error(f'Error enviando email OTP: {e}')
-                messages.warning(
-                    request,
-                    f'⚠️ Cuenta creada, pero hubo un problema de conexión al enviar el correo a '
-                    f'<strong>{user.email}</strong>. Por favor, intenta "Reenviar código".'
-                )
+                messages.success(request, f'¡Bienvenido, {user.username}!')
+                return redirect('dashboard')
+            # -------------------------
 
-            return redirect('verificar_otp')
     else:
         form = RegistroUsuarioForm()
 
