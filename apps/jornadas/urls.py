@@ -1,11 +1,11 @@
-"""SICEME - URLs de Jornadas"""
+# -*- coding: utf-8 -*-
 from django.urls import path
-from . import views
+from apps.jornadas import views
 
 urlpatterns = [
     path('', views.lista_jornadas_view, name='lista_jornadas'),
-    path('entrada/', views.registrar_entrada_view, name='registrar_entrada'),
+    path('registrar_entrada/', views.registrar_entrada_view, name='registrar_entrada'),
+    path('pausa_inicio/<int:pk>/', views.registrar_pausa_inicio_view, name='registrar_pausa_inicio'),
+    path('pausa_fin/<int:pk>/', views.registrar_pausa_fin_view, name='registrar_pausa_fin'),
     path('salida/<int:pk>/', views.registrar_salida_view, name='registrar_salida'),
-    path('pausa-inicio/<int:pk>/', views.registrar_pausa_inicio_view, name='registrar_pausa_inicio'),
-    path('pausa-fin/<int:pk>/', views.registrar_pausa_fin_view, name='registrar_pausa_fin'),
 ]

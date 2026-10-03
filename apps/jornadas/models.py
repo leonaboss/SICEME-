@@ -1,6 +1,6 @@
-"""SICEME - Modelo de Jornadas Laborales"""
+# -*- coding: utf-8 -*-
 from django.db import models
-from apps.especialistas.models import Especialista
+from apps.morbilidades.models import Especialista
 
 
 class Jornada(models.Model):

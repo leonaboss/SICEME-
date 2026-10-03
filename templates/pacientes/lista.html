@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}SICEME - Pacientes{% endblock %}
+{% block page_title %}Gestión de Pacientes{% endblock %}
+{% block content %}
+<div class="table-card">
+    <div class="table-card-header">
+        <h3><i class="bi bi-people-fill"></i> Pacientes Registrados</h3>
+        <a href="{% url 'crear_paciente' %}" class="btn-siceme"><i class="bi bi-plus-circle"></i> Nuevo</a>
+    </div>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Cédula</th>
+                    <th>Nombre</th>
+                    <th>Edad</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for reg in registros %}
+                <tr>
+                    <td>{{ reg.cedula }}</td>
+                    <td>{{ reg.nombre_completo }}</td>
+                    <td>{{ reg.edad }}</td>
+                    <td>
+                        <a href="{% url 'editar_paciente' reg.pk %}" class="btn-info-sm"><i class="bi bi-pencil"></i></a>
+                        <a href="{% url 'detalle_paciente' reg.pk %}" class="btn-siceme-sm"><i class="bi bi-eye"></i></a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -9,14 +9,21 @@ class Movimiento(models.Model):
     Tabla centralizada de movimientos (Registro unificado de actividad).
     Materializa en una sola tabla lo que antes se consultaba en 4 diferentes.
     """
-    TIPO_CHOICES = [
-        ('emergencia', 'Emergencia'),
-        ('especialista', 'Especialista'),
-        ('ecosonograma', 'Ecosonograma'),
-        ('no_asistido', 'Paciente no asistido de Especialistas'),
+    ACCION_CHOICES = [
+        ('CREAR', 'Crear'),
+        ('EDITAR', 'Editar'),
+        ('ELIMINAR', 'Eliminar'),
     ]
 
-    tipo_mov = models.CharField('Tipo de Movimiento', max_length=20, choices=TIPO_CHOICES)
+    MODULO_CHOICES = [
+        ('EMERGENCIA', 'Emergencia'),
+        ('CONSULTA_ESPECIALISTA', 'Consulta Especialista'),
+        ('ECOSONOGRAMA', 'Ecosonograma'),
+        ('NO_ASISTIDO', 'No Asistido'),
+    ]
+
+    accion = models.CharField('Acción Realizada', max_length=20, choices=ACCION_CHOICES, default='CREAR')
+    modulo_origen = models.CharField('Módulo Origen', max_length=30, choices=MODULO_CHOICES, default='EMERGENCIA')
     nombre_display = models.CharField('Nombre de Paciente', max_length=255)
     detalle = models.CharField('Detalles Adicionales', max_length=255, blank=True, null=True)
     usuario = models.ForeignKey(
@@ -40,12 +47,12 @@ class Movimiento(models.Model):
         ordering = ['-created_at']
         indexes = [
             models.Index(fields=['activo', 'created_at']),
-            models.Index(fields=['tipo_mov']),
+            models.Index(fields=['accion']),
             models.Index(fields=['content_type', 'object_id']),
         ]
 
     def __str__(self):
-        return f"{self.get_tipo_mov_display()} - {self.nombre_display} ({self.created_at.strftime('%d/%m/%Y')})"
+        return f"{self.get_accion_display()} - {self.nombre_display} ({self.created_at.strftime('%d/%m/%Y')})"
 class CierreMes(models.Model):
     """
     Registro formal de cierre de mes para la Biblioteca Histórica.

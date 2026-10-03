@@ -177,7 +177,9 @@ function initDashboardCharts() {
                             data: data.por_especialidad.data,
                             backgroundColor: data.por_especialidad.labels.map((_, i) => colors[i % colors.length]),
                             borderRadius: 6,
-                            maxBarThickness: 50,
+                            // Eliminamos maxBarThickness para que Chart.js las ajuste automáticamente
+                            barPercentage: 0.8,
+                            categoryPercentage: 0.9,
                         }]
                     },
                     plugins: [ChartDataLabels],

@@ -33,6 +33,13 @@ RBAC_CONFIG = {
     'promover_admin_usuario': ['ADMIN'],
     'verificar_cuenta_manual': ['ADMIN'],
     'bitacora': ['ADMIN'],
+    # Nuevas rutas centralizadas para Morbilidades (Emergencias, Especialistas, Ecos, No Asistidos)
+    'lista_morbilidades': ['ADMIN', 'ESPECIALISTA', 'PUBLICO'],
+    'crear_morbilidad': ['ADMIN', 'ESPECIALISTA', 'PUBLICO'],
+    'editar_morbilidad': ['ADMIN', 'ESPECIALISTA', 'PUBLICO'],
+    'eliminar_morbilidad': ['ADMIN', 'ESPECIALISTA', 'PUBLICO'],
+    
+    # Rutas para Especialidades y Especialistas (gestionadas en Morbilidades)
     'crud_especialidades': ['ADMIN'],
     'crear_especialidad': ['ADMIN'],
     'editar_especialidad': ['ADMIN'],
@@ -43,22 +50,6 @@ RBAC_CONFIG = {
     'eliminar_especialista': ['ADMIN'],
 
     # Módulos operativos - ADMIN, ESPECIALISTA y PUBLICO
-    'lista_emergencias': ['ADMIN', 'ESPECIALISTA', 'PUBLICO'],
-    'crear_emergencia': ['ADMIN', 'ESPECIALISTA', 'PUBLICO'],
-    'editar_emergencia': ['ADMIN', 'ESPECIALISTA', 'PUBLICO'],
-    'eliminar_emergencia': ['ADMIN', 'ESPECIALISTA', 'PUBLICO'],
-    'lista_morbilidad_especialistas': ['ADMIN', 'ESPECIALISTA', 'PUBLICO'],
-    'crear_morbilidad_especialista': ['ADMIN', 'ESPECIALISTA', 'PUBLICO'],
-    'editar_morbilidad_especialista': ['ADMIN', 'ESPECIALISTA', 'PUBLICO'],
-    'eliminar_morbilidad_especialista': ['ADMIN', 'ESPECIALISTA', 'PUBLICO'],
-    'lista_no_asistidos': ['ADMIN', 'ESPECIALISTA', 'PUBLICO'],
-    'crear_no_asistido': ['ADMIN', 'ESPECIALISTA', 'PUBLICO'],
-    'editar_no_asistido': ['ADMIN', 'ESPECIALISTA', 'PUBLICO'],
-    'eliminar_no_asistido': ['ADMIN', 'ESPECIALISTA', 'PUBLICO'],
-    'lista_ecosonogramas': ['ADMIN', 'ESPECIALISTA', 'PUBLICO'],
-    'crear_ecosonograma': ['ADMIN', 'ESPECIALISTA', 'PUBLICO'],
-    'editar_ecosonograma': ['ADMIN', 'ESPECIALISTA', 'PUBLICO'],
-    'eliminar_ecosonograma': ['ADMIN', 'ESPECIALISTA', 'PUBLICO'],
     'lista_jornadas': ['ADMIN', 'ESPECIALISTA'],
     'registrar_entrada': ['ADMIN', 'ESPECIALISTA'],
     'registrar_salida': ['ADMIN', 'ESPECIALISTA'],

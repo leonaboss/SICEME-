@@ -274,7 +274,7 @@
 <div class="table-card">
     <div class="table-card-header">
         <h3><i class="bi bi-clock-history" style="color:var(--primary)"></i> Registros Recientes</h3>
-        <a href="{% url 'lista_emergencias' %}" class="btn-siceme-outline btn-sm">Ver todos <i
+        <a href="{% url 'lista_morbilidades' %}?tipo=EMERGENCIA" class="btn-siceme-outline btn-sm">Ver todos <i
                 class="bi bi-arrow-right"></i></a>
     </div>
     <div class="table-responsive">
@@ -290,19 +290,15 @@
             <tbody>
                 {% for reg in ultimos_registros %}
                 <tr>
-                    <td><strong>{{ reg.nombre_apellido }}</strong></td>
+                    <td><strong>{{ reg.paciente.nombre_completo }}</strong></td>
                     <td>
-                        {% if reg.tipo_morb == 'EMERGENCIA' %}
-                        <span class="badge bg-light text-dark">Emergencia</span>
-                        {% else %}
-                        <span class="badge-status active">{{ reg.especialidad }}</span>
-                        {% endif %}
+                        <span class="badge bg-light text-dark">{{ reg.get_tipo_modulo_display }}</span>
                     </td>
                     <td>
-                        {% if reg.tipo_morb == 'EMERGENCIA' %}
-                        {{ reg.medico }}
+                        {% if reg.medico %}
+                        {{ reg.medico.nombre_completo }}
                         {% else %}
-                        {{ reg.especialista }}
+                        -
                         {% endif %}
                     </td>
                     <td>{{ reg.created_at|date:"d/m/Y H:i" }}</td>

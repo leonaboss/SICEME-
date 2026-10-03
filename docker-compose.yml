@@ -17,7 +17,8 @@ services:
     volumes:
       - .:/app
     ports:
-      - "8000:8000"
+      # Docker siempre usará el 9000. El 8000 queda libre para tu desarrollo.
+      - "9000:8000"
     env_file:
       - .env
     depends_on:

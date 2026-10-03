@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}SICEME - {{ titulo }}{% endblock %}
+{% block page_title %}{{ titulo }}{% endblock %}
+{% block content %}
+<div class="form-card">
+    <form method="post" novalidate>
+        {% csrf_token %}
+        <div class="row">
+            {% for field in form %}
+            <div class="col-md-6 form-group">
+                <label>{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}<div class="text-danger small mt-1">{{ field.errors.0 }}</div>{% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        <button type="submit" class="btn-siceme mt-3">Guardar</button>
+        <a href="{% url 'lista_pacientes' %}" class="btn-siceme-outline mt-3">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

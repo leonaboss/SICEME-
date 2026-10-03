@@ -13,7 +13,7 @@ load_dotenv(BASE_DIR / '.env')
 # Security
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-change-me')
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '192.168.1.243', '.pythonanywhere.com', '.onrender.com', '.alwaysdata.net']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '192.168.1.243', '.alwaysdata.net']
 
 # Application definition
 INSTALLED_APPS = [
@@ -26,11 +26,10 @@ INSTALLED_APPS = [
     'django_recaptcha',
     # SICEME Apps
     'apps.usuarios',
-    'apps.especialistas',
-    'apps.emergencias',
-    'apps.ecosonogramas',
-    'apps.jornadas',
     'apps.reportes',
+    'apps.pacientes',
+    'apps.morbilidades',
+    'apps.jornadas',
 ]
 
 MIDDLEWARE = [
@@ -115,7 +114,12 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Usar almacenamiento comprimido solo en producción
+if DEBUG:
+    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+else:
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Media files
 MEDIA_URL = '/media/'
@@ -142,9 +146,9 @@ EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', 'django.core.mail.backends.smtp.Email
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'unefmsiceme@gmail.com')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'hlvkmtpqhmglcvmm')
-DEFAULT_FROM_EMAIL = os.getenv('EMAIL_HOST_USER', 'unefmsiceme@gmail.com')
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
+DEFAULT_FROM_EMAIL = os.getenv('EMAIL_HOST_USER', '')
 
 # Security Settings
 SESSION_COOKIE_HTTPONLY = True
@@ -154,8 +158,8 @@ CSRF_COOKIE_SECURE = not DEBUG
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = 'DENY'
-RECAPTCHA_PUBLIC_KEY = os.getenv('RECAPTCHA_PUBLIC_KEY', '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI')
-RECAPTCHA_PRIVATE_KEY = os.getenv('RECAPTCHA_PRIVATE_KEY', '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe')
+RECAPTCHA_PUBLIC_KEY = os.getenv('RECAPTCHA_PUBLIC_KEY', '')
+RECAPTCHA_PRIVATE_KEY = os.getenv('RECAPTCHA_PRIVATE_KEY', '')
 SILENCED_SYSTEM_CHECKS = ['django_recaptcha.recaptcha_test_key_error']
 
 if not DEBUG:
@@ -166,8 +170,6 @@ if not DEBUG:
     # Requerido para que el CSRF funcione en dominios HTTPS
     CSRF_TRUSTED_ORIGINS = [
         'https://*.siceme.com', # Cambia siceme.com por tu dominio real
-        'https://*.pythonanywhere.com', # Para PythonAnywhere
-        'https://*.onrender.com', # Para Render
         'https://*.alwaysdata.net', # Para Alwaysdata
     ]
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')

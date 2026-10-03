@@ -7,9 +7,8 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('usuarios/', include('apps.usuarios.urls')),
-    path('especialistas/', include('apps.especialistas.urls')),
-    path('emergencias/', include('apps.emergencias.urls')),
-    path('ecosonogramas/', include('apps.ecosonogramas.urls')),
+    path('pacientes/', include('apps.pacientes.urls')),
+    path('morbilidades/', include('apps.morbilidades.urls')),
     path('jornadas/', include('apps.jornadas.urls')),
     path('reportes/', include('apps.reportes.urls')),
     path('', include('apps.reportes.urls')),  # Dashboard como página principal

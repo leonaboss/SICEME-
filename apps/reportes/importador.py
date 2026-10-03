@@ -6,10 +6,8 @@ from django.db.models import Max
 from django.utils import timezone
 from django.contrib.contenttypes.models import ContentType
 
-from apps.emergencias.models import MorbilidadEmergencia, MorbilidadEspecialista, PacienteNoAsistido
-from apps.ecosonogramas.models import MorbilidadEcosonograma
 from apps.reportes.models import Movimiento
-from apps.especialistas.models import Especialidad, Especialista, EstadisticaEspecialidad
+from apps.morbilidades.models import Especialidad, Especialista, EstadisticaEspecialidad, Morbilidad
 
 logger = logging.getLogger(__name__)
 
